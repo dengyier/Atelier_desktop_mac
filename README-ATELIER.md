@@ -36,6 +36,6 @@ The preset declares a stdio connector using `uvx --python 3.11 mcp-for-blender==
 
 Atelier Desktop uses `atelier-desktop` in production builds and `atelier-desktop-dev` in development. It does not import another DSH profile's sessions, plugins, or credentials. On macOS, the development Harness home is under `~/Library/Application Support/atelier-desktop-dev/harness`. Workspace files remain in the workspace you selected.
 
-Atelier has no signed update feed. The inherited upstream release workflow has not been adapted for public Atelier publication, so use local build commands for previews. The desktop app is distinct from Atelier's multiuser web service.
+Atelier has no signed update feed. The [Atelier signed macOS release workflow](docs/atelier-signed-release.md) is configured but cannot produce a signed release until an Apple Developer Program team and its credentials are available. The inherited DSH release workflow remains unsuitable for Atelier; use the [Atelier preview workflow](docs/atelier-preview-release.md) or local build commands for unsigned previews. The desktop app is distinct from Atelier's multiuser web service.
 
 The host is derived from [DSH Desktop](https://github.com/dataelement/dsh-desktop); the Agent runtime comes from [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Keep their licenses and component-specific notices when redistributing. See [LICENSE](LICENSE) and the notices in the relevant bundled packages.

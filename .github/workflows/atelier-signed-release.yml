@@ -1,0 +1,204 @@
+name: Publish signed Atelier Desktop for macOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Stable version without a v prefix (for example 0.1.0)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: atelier-signed-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate version, repository and Apple credentials
+        env:
+          VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+          CSC_LINK: ${{ secrets.ATELIER_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.ATELIER_CSC_KEY_PASSWORD }}
+          APPLE_API_KEY_CONTENT: ${{ secrets.ATELIER_APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.ATELIER_APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.ATELIER_APPLE_API_ISSUER }}
+          APPLE_TEAM_ID: ${{ secrets.ATELIER_APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = 'dengyier/Atelier_desktop_mac' || {
+            echo '::error::This release workflow is restricted to the Atelier repository'
+            exit 1
+          }
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo '::error::Use a stable version such as 0.1.0'
+            exit 1
+          fi
+          for name in CSC_LINK CSC_KEY_PASSWORD APPLE_API_KEY_CONTENT APPLE_API_KEY_ID APPLE_API_ISSUER APPLE_TEAM_ID; do
+            test -n "${!name}" || { echo "::error::Missing Apple release secret: $name"; exit 1; }
+          done
+          if gh release view "atelier-v$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release atelier-v$VERSION already exists"
+            exit 1
+          fi
+          tag_status=0
+          git ls-remote --exit-code --tags "https://github.com/$GITHUB_REPOSITORY.git" "refs/tags/atelier-v$VERSION" >/dev/null 2>&1 || tag_status=$?
+          case "$tag_status" in
+            0) echo "::error::Tag atelier-v$VERSION already exists"; exit 1 ;;
+            2) ;;
+            *) echo '::error::Unable to check existing release tags'; exit 1 ;;
+          esac
+
+  macos-apple-silicon:
+    needs: preflight
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Validate checked-out source version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          node -e 'const p = require("./package.json"); const l = require("./package-lock.json"); if (p.version !== process.env.VERSION || l.version !== process.env.VERSION || l.packages[""].version !== process.env.VERSION) { console.error("::error::Update and commit package.json and package-lock.json to the requested version before release"); process.exit(1) }'
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - name: Prepare Apple notarization key
+        env:
+          APPLE_API_KEY_CONTENT: ${{ secrets.ATELIER_APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.ATELIER_APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.ATELIER_APPLE_API_ISSUER }}
+          APPLE_TEAM_ID: ${{ secrets.ATELIER_APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          key_path="$RUNNER_TEMP/AuthKey_${APPLE_API_KEY_ID}.p8"
+          printf '%s' "$APPLE_API_KEY_CONTENT" > "$key_path"
+          chmod 600 "$key_path"
+          echo "APPLE_API_KEY=$key_path" >> "$GITHUB_ENV"
+          echo "APPLE_API_KEY_ID=$APPLE_API_KEY_ID" >> "$GITHUB_ENV"
+          echo "APPLE_API_ISSUER=$APPLE_API_ISSUER" >> "$GITHUB_ENV"
+          echo "APPLE_TEAM_ID=$APPLE_TEAM_ID" >> "$GITHUB_ENV"
+      - name: Prepare Atelier signing keychain
+        id: signing_keychain
+        env:
+          CSC_LINK: ${{ secrets.ATELIER_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.ATELIER_CSC_KEY_PASSWORD }}
+        run: node scripts/prepare-macos-signing-keychain.mjs
+      - name: Build signed and notarized Apple Silicon package
+        env:
+          CSC_KEYCHAIN: ${{ steps.signing_keychain.outputs.keychain }}
+          CSC_LINK: ${{ secrets.ATELIER_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.ATELIER_CSC_KEY_PASSWORD }}
+        run: npm run package:signed:mac:arm64
+      - name: Sign, notarize and staple DMG
+        env:
+          CSC_KEYCHAIN: ${{ steps.signing_keychain.outputs.keychain }}
+        run: |
+          set -euo pipefail
+          dmg_path='dist/atelier-desktop-mac-arm64.dmg'
+          test -s "$dmg_path"
+          identity="$(security find-identity -v -p codesigning "$CSC_KEYCHAIN" | awk '/Developer ID Application/ { print $2; exit }')"
+          test -n "$identity" || { echo '::error::Developer ID Application identity not found'; exit 1; }
+          codesign --keychain "$CSC_KEYCHAIN" --sign "$identity" --timestamp --force "$dmg_path"
+          xcrun notarytool submit "$dmg_path" \
+            --key "$APPLE_API_KEY" \
+            --key-id "$APPLE_API_KEY_ID" \
+            --issuer "$APPLE_API_ISSUER" \
+            --wait \
+            --no-s3-acceleration
+          xcrun stapler staple "$dmg_path"
+      - name: Verify Atelier identity, signature, notarization and assets
+        run: |
+          set -euo pipefail
+          app_path='dist/mac-arm64/Atelier Desktop.app'
+          dmg_path='dist/atelier-desktop-mac-arm64.dmg'
+          zip_path='dist/atelier-desktop-mac-arm64.zip'
+          test -d "$app_path"
+          test -s "$dmg_path"
+          test -s "$zip_path"
+          unzip -Z1 "$zip_path" | grep -F 'Atelier Desktop.app/Contents/Info.plist' >/dev/null
+          actual_team="$(codesign -dv --verbose=4 "$app_path" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
+          test "$actual_team" = "$APPLE_TEAM_ID" || { echo '::error::Signed app team does not match the configured Atelier team'; exit 1; }
+          codesign --verify --deep --strict --verbose=2 "$app_path"
+          spctl --assess --type execute --verbose=4 "$app_path"
+          xcrun stapler validate "$app_path"
+          codesign --verify --verbose=2 "$dmg_path"
+          spctl --assess --type open --context context:primary-signature --verbose=4 "$dmg_path"
+          xcrun stapler validate "$dmg_path"
+          cd dist
+          shasum -a 256 atelier-desktop-mac-arm64.dmg atelier-desktop-mac-arm64.zip > SHA256SUMS
+          shasum -a 256 -c SHA256SUMS
+      - name: Remove temporary Apple credentials
+        if: always()
+        env:
+          SIGNING_KEYCHAIN: ${{ steps.signing_keychain.outputs.keychain }}
+          SIGNING_CERTIFICATE: ${{ steps.signing_keychain.outputs.certificate }}
+          SIGNING_KEYCHAIN_LIST: ${{ steps.signing_keychain.outputs.keychain_list }}
+        run: |
+          if [ -n "$SIGNING_KEYCHAIN_LIST" ] && [ -f "$SIGNING_KEYCHAIN_LIST" ]; then
+            keychains=()
+            while IFS= read -r keychain; do
+              test -z "$keychain" || keychains+=("$keychain")
+            done < "$SIGNING_KEYCHAIN_LIST"
+            if [ "${#keychains[@]}" -gt 0 ]; then security list-keychains -d user -s "${keychains[@]}"; fi
+            rm -f "$SIGNING_KEYCHAIN_LIST"
+          fi
+          if [ -n "$SIGNING_KEYCHAIN" ]; then security delete-keychain "$SIGNING_KEYCHAIN" || rm -f "$SIGNING_KEYCHAIN"; fi
+          if [ -n "$SIGNING_CERTIFICATE" ]; then rm -f "$SIGNING_CERTIFICATE"; fi
+          if [ -n "${APPLE_API_KEY:-}" ]; then rm -f "$APPLE_API_KEY"; fi
+      - name: Publish verified GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          gh release create "atelier-v$VERSION" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Atelier Desktop $VERSION (macOS Apple Silicon)" \
+            --notes "Developer ID signed and Apple notarized macOS Apple Silicon build of Atelier Desktop. Verify SHA256SUMS before installation. Automatic updates are not enabled. Blender and its MCP add-on are separate prerequisites for 3D tasks. Source commit: $GITHUB_SHA." \
+            dist/atelier-desktop-mac-arm64.dmg \
+            dist/atelier-desktop-mac-arm64.zip \
+            dist/SHA256SUMS
+      - uses: oras-project/setup-oras@v2
+        with:
+          url: https://github.com/oras-project/oras/releases/download/v1.3.4/oras_1.3.4_darwin_arm64.tar.gz
+          checksum: 217761a9500242ff473de8656b5aca21136ff39e17e9e61fd8936bbfd902704c
+      - name: Publish the same verified files to GitHub Packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GH_TOKEN" | oras login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          repo_lower="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          cd dist
+          oras push \
+            --artifact-type application/vnd.atelier.desktop.signed.v1 \
+            --annotation "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --annotation "org.opencontainers.image.version=$VERSION" \
+            "ghcr.io/$repo_lower:$VERSION" \
+            atelier-desktop-mac-arm64.dmg:application/x-apple-diskimage \
+            atelier-desktop-mac-arm64.zip:application/zip \
+            SHA256SUMS:text/plain
+      - name: Verify remote release and package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          release_valid="$(gh release view "atelier-v$VERSION" --repo "$GITHUB_REPOSITORY" --json isPrerelease,assets \
+            --jq 'select(.isPrerelease == false and ([.assets[].name] | sort) == (["SHA256SUMS", "atelier-desktop-mac-arm64.dmg", "atelier-desktop-mac-arm64.zip"] | sort)) | .isPrerelease')"
+          test "$release_valid" = false
+          repo_lower="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          oras manifest fetch "ghcr.io/$repo_lower:$VERSION" >/dev/null

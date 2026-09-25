@@ -1,6 +1,6 @@
 # Atelier Desktop preview distribution
 
-Atelier Desktop publishes an unsigned macOS Apple Silicon preview. The GitHub Release contains the DMG, ZIP, and SHA-256 checksums. GitHub Packages stores the same files as an OCI artifact for developer retrieval; it is not a Docker image and cannot be run with `docker run`. Neither channel is a signed, notarized production release or an automatic update feed.
+Atelier Desktop publishes an unsigned macOS Apple Silicon preview. The GitHub Release contains the DMG, ZIP, and SHA-256 checksums. GitHub Packages stores the same files as an OCI artifact for developer retrieval; it is not a Docker image and cannot be run with `docker run`. Neither channel is a signed, notarized production release or an automatic update feed. The separate [signed release workflow](atelier-signed-release.md) requires Apple Developer credentials.
 
 ## Publish
 

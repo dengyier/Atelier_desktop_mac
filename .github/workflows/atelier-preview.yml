@@ -1,0 +1,107 @@
+name: Publish Atelier Desktop preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Preview version without a v prefix (for example 0.1.0-preview.1)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: atelier-preview-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  macos-apple-silicon:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Validate preview version
+        env:
+          VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-preview\.[0-9]+$ ]]; then
+            echo '::error::Use a version such as 0.1.0-preview.1'
+            exit 1
+          fi
+          if gh release view "atelier-v$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release atelier-v$VERSION already exists"
+            exit 1
+          fi
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - name: Build unsigned Apple Silicon preview
+        env:
+          VERSION: ${{ inputs.version }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          npm version --no-git-tag-version --allow-same-version "$VERSION"
+          npm run package:dev:mac:arm64
+      - name: Verify packaged app and checksums
+        run: |
+          set -euo pipefail
+          test -d 'dist-dev/mac-arm64/Atelier Desktop Dev.app'
+          test -s dist-dev/atelier-desktop-dev-mac-arm64.dmg
+          test -s dist-dev/atelier-desktop-dev-mac-arm64.zip
+          unzip -Z1 dist-dev/atelier-desktop-dev-mac-arm64.zip | grep -F 'Atelier Desktop Dev.app/Contents/Info.plist' >/dev/null
+          cd dist-dev
+          shasum -a 256 atelier-desktop-dev-mac-arm64.dmg atelier-desktop-dev-mac-arm64.zip > SHA256SUMS
+          shasum -a 256 -c SHA256SUMS
+      - name: Publish GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          gh release create "atelier-v$VERSION" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "Atelier Desktop $VERSION (macOS Apple Silicon preview)" \
+            --prerelease \
+            --notes "Unsigned macOS Apple Silicon preview of Atelier Desktop. This is not a notarized production installer and does not support automatic updates. Install only if you trust this repository and verify SHA256SUMS. Blender and its MCP add-on are separate prerequisites for 3D tasks. Source commit: $GITHUB_SHA." \
+            dist-dev/atelier-desktop-dev-mac-arm64.dmg \
+            dist-dev/atelier-desktop-dev-mac-arm64.zip \
+            dist-dev/SHA256SUMS
+      - uses: oras-project/setup-oras@v1
+        with:
+          version: 1.3.4
+      - name: Publish the same preview files to GitHub Packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GH_TOKEN" | oras login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          repo_lower="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          cd dist-dev
+          oras push \
+            --artifact-type application/vnd.atelier.desktop.preview.v1 \
+            --annotation "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --annotation "org.opencontainers.image.version=$VERSION" \
+            "ghcr.io/$repo_lower:$VERSION" \
+            atelier-desktop-dev-mac-arm64.dmg:application/x-apple-diskimage \
+            atelier-desktop-dev-mac-arm64.zip:application/zip \
+            SHA256SUMS:text/plain
+      - name: Verify remote release and package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          release_valid="$(gh release view "atelier-v$VERSION" --repo "$GITHUB_REPOSITORY" --json isPrerelease,assets \
+            --jq 'select(.isPrerelease == true and ([.assets[].name] | sort) == (["SHA256SUMS", "atelier-desktop-dev-mac-arm64.dmg", "atelier-desktop-dev-mac-arm64.zip"] | sort)) | .isPrerelease')"
+          test "$release_valid" = true
+          repo_lower="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          oras manifest fetch "ghcr.io/$repo_lower:$VERSION" >/dev/null

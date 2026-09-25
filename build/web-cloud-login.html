@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Atelier · Sign in</title>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,sans-serif;color:#1f2925;background:#f7f8f6}
+    *{box-sizing:border-box}body{min-height:100vh;margin:0;display:grid;place-items:center;padding:24px}
+    main{width:min(440px,100%);padding:36px;background:white;border:1px solid #e1e8e3;border-radius:22px;box-shadow:0 20px 60px #173e2710}
+    .brand{font-weight:800;font-size:24px}.beta{font-size:10px;letter-spacing:.12em;border:1px solid #cad6cf;border-radius:4px;padding:3px 5px;vertical-align:middle;margin-left:5px}
+    h1{font-size:24px;margin:30px 0 8px}p{color:#607067;line-height:1.55;margin:0 0 22px}
+    label{display:block;font-size:13px;font-weight:650;margin:16px 0 0}input{display:block;width:100%;margin-top:7px;padding:12px 14px;border:1px solid #cddbd1;border-radius:10px;font:inherit}
+    input:focus{outline:2px solid #9bcbb0;outline-offset:1px}.actions{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
+    button{border:1px solid #d7e2da;border-radius:10px;background:#fff;padding:11px 15px;font:inherit;cursor:pointer}
+    button.primary{background:#296348;color:white;border-color:#296348;font-weight:650;flex:1}button:disabled{opacity:.55;cursor:wait}
+    #message{min-height:22px;font-size:13px;margin:14px 0 0}#message.error{color:#a93632}.hidden{display:none}
+    .lang{float:right}small{display:block;margin-top:28px;color:#75837b;line-height:1.5}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">atelier<span class="beta">BETA</span><select class="lang" id="lang" aria-label="Language"><option value="en">English</option><option value="fr">Français</option><option value="zh">中文</option></select></div>
+    <h1 id="title"></h1><p id="intro"></p>
+    <form id="form">
+      <label id="emailLabel"><span></span><input id="email" type="email" autocomplete="email" required></label>
+      <label id="passwordLabel"><span></span><input id="password" type="password" autocomplete="current-password" required></label>
+      <label id="nameLabel" class="hidden"><span></span><input id="name" autocomplete="name"></label>
+      <label id="workspaceLabel" class="hidden"><span></span><input id="workspace"></label>
+      <label id="codeLabel" class="hidden"><span></span><input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6"></label>
+      <div id="message" role="status"></div>
+      <div class="actions"><button type="button" id="switch"></button><button class="primary" id="submit" type="submit"></button></div>
+      <button type="button" id="forgot"></button>
+    </form>
+    <small id="note"></small>
+  </main>
+  <script>
+    const copy={
+      en:{login:'Sign in to Atelier',register:'Create an Atelier account',verify:'Verify your email',resetRequest:'Reset your password',resetConfirm:'Enter the code and a new password',intro:'Use your existing Atelier account. Your web workspace and model key stay separate from other users.',email:'Email',password:'Password',newPassword:'New password (12+ characters)',name:'Your name',workspace:'Workspace name',code:'Email code',signIn:'Sign in',create:'Send verification code',confirm:'Verify and continue',request:'Send reset code',finish:'Reset and continue',toRegister:'Create account',toLogin:'Back to sign in',forgot:'Forgot password?',note:'Before running a task, choose a model and enter your own provider API key in Settings → Models.',error:'Request failed. Please try again.'},
+      fr:{login:'Se connecter à Atelier',register:'Créer un compte Atelier',verify:'Vérifier votre adresse e-mail',resetRequest:'Réinitialiser le mot de passe',resetConfirm:'Saisir le code et un nouveau mot de passe',intro:'Utilisez votre compte Atelier existant. Votre espace web et votre clé de modèle sont séparés de ceux des autres utilisateurs.',email:'Adresse e-mail',password:'Mot de passe',newPassword:'Nouveau mot de passe (12 caractères minimum)',name:'Votre nom',workspace:'Nom de l’espace de travail',code:'Code reçu par e-mail',signIn:'Se connecter',create:'Envoyer le code',confirm:'Vérifier et continuer',request:'Envoyer le code',finish:'Réinitialiser et continuer',toRegister:'Créer un compte',toLogin:'Retour à la connexion',forgot:'Mot de passe oublié ?',note:'Avant de lancer une tâche, choisissez un modèle et saisissez votre propre clé API dans Paramètres → Modèles.',error:'Échec de la requête. Réessayez.'},
+      zh:{login:'登录 Atelier',register:'创建 Atelier 账号',verify:'验证邮箱',resetRequest:'重设密码',resetConfirm:'填写验证码和新密码',intro:'使用现有 Atelier 账号。网页工作区和模型 Key 按用户分开。',email:'邮箱地址',password:'密码',newPassword:'新密码（至少 12 位）',name:'称呼',workspace:'工作空间名称',code:'邮件验证码',signIn:'登录',create:'发送验证码',confirm:'验证并继续',request:'发送重设验证码',finish:'重设并继续',toRegister:'创建账号',toLogin:'返回登录',forgot:'忘记密码？',note:'执行任务前，请在「设置 → 模型」选择模型并填写自己的 API Key。',error:'请求失败，请稍后重试。'}
+    }
+    const $=id=>document.getElementById(id)
+    let mode='login'
+    const initial=navigator.language.toLowerCase()
+    $('lang').value=initial.startsWith('fr')?'fr':initial.startsWith('zh')?'zh':'en'
+    const text=()=>copy[$('lang').value]
+    function render(){
+      const t=text(); document.documentElement.lang=$('lang').value
+      $('title').textContent=t[mode]; $('intro').textContent=t.intro; $('note').textContent=t.note
+      for(const key of ['email','password','name','workspace','code']) $(key+'Label').querySelector('span').textContent=t[key]
+      $('passwordLabel').querySelector('span').textContent=mode==='resetConfirm'?t.newPassword:t.password
+      $('emailLabel').classList.toggle('hidden',mode==='verify'||mode==='resetConfirm')
+      $('passwordLabel').classList.toggle('hidden',mode==='verify'||mode==='resetRequest')
+      $('nameLabel').classList.toggle('hidden',mode!=='register')
+      $('workspaceLabel').classList.toggle('hidden',mode!=='register')
+      $('codeLabel').classList.toggle('hidden',mode!=='verify'&&mode!=='resetConfirm')
+      for(const key of ['email','password','name','workspace','code']) $(key).required=!$(key+'Label').classList.contains('hidden')
+      $('password').minLength=mode==='register'||mode==='resetConfirm'?12:1
+      $('password').autocomplete=mode==='register'||mode==='resetConfirm'?'new-password':'current-password'
+      $('switch').textContent=mode==='login'?t.toRegister:t.toLogin
+      $('forgot').textContent=t.forgot;$('forgot').classList.toggle('hidden',mode!=='login')
+      $('submit').textContent=({login:t.signIn,register:t.create,verify:t.confirm,resetRequest:t.request,resetConfirm:t.finish})[mode]
+      $('message').textContent=''; $('message').className=''
+    }
+    $('lang').addEventListener('change',render)
+    $('switch').addEventListener('click',()=>{mode=mode==='login'?'register':'login';render()})
+    $('forgot').addEventListener('click',()=>{mode='resetRequest';render()})
+    $('form').addEventListener('submit',async event=>{
+      event.preventDefault();$('submit').disabled=true;$('message').textContent=''
+      const locale=({en:'en-US',fr:'fr-FR',zh:'zh-CN'})[$('lang').value]
+      const email=$('email').value.trim()
+      const actions={login:['login',{email,password:$('password').value}],register:['register',{email,password:$('password').value,displayName:$('name').value.trim(),organizationName:$('workspace').value.trim(),locale}],verify:['verify',{email,code:$('code').value.trim()}],resetRequest:['reset-request',{email,locale}],resetConfirm:['reset-confirm',{email,code:$('code').value.trim(),newPassword:$('password').value}]}
+      const [action,body]=actions[mode]
+      try{
+        const response=await fetch('/cloud/auth/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+        const data=await response.json()
+        if(!response.ok)throw Error(data.detail||data.error||text().error)
+        if(mode==='register'){mode='verify';render();$('message').textContent=`${text().code}: ${email}`}
+        else if(mode==='resetRequest'){mode='resetConfirm';render();$('message').textContent=`${text().code}: ${email}`}
+        else location.assign('/')
+      }catch(error){$('message').textContent=error.message||text().error;$('message').className='error'}
+      finally{$('submit').disabled=false}
+    })
+    render()
+  </script>
+</body>
+</html>

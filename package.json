@@ -26,6 +26,7 @@
     "postinstall": "patch-package && node scripts/install-brand-assets.mjs && install-electron --no",
     "dev": "electron-vite dev",
     "web:dev": "node scripts/start-web.mjs",
+    "web:cloud": "node scripts/web-cloud/gateway.mjs",
     "build": "electron-vite build",
     "icons:generate": "node scripts/generate-app-icons.mjs",
     "loader:generate": "node scripts/generate-loader-gifs.mjs",

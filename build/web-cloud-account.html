@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atelier · Account</title>
+<style>body{font:16px system-ui,sans-serif;background:#f7f8f6;color:#24362a;min-height:100vh;display:grid;place-items:center;margin:0;padding:24px}main{background:#fff;border:1px solid #dce8df;border-radius:18px;padding:32px;width:min(400px,100%)}h1{font-size:24px}button,a{font:inherit;padding:10px 14px;border-radius:8px}button{background:#2b6448;color:#fff;border:0;cursor:pointer}a{color:#2b6448}p{color:#5b7061}</style></head>
+<body><main><h1>Atelier</h1><p id="name"></p><button id="logout" type="button">Sign out / Déconnexion / 退出登录</button><a href="/">Back / Retour / 返回</a></main>
+<script>
+fetch('/cloud/auth/me').then(response=>response.json()).then(user=>{document.getElementById('name').textContent=user.displayName||''}).catch(()=>location.assign('/login'))
+document.getElementById('logout').addEventListener('click',async()=>{await fetch('/cloud/auth/logout',{method:'POST'});location.assign('/login')})
+</script></body></html>

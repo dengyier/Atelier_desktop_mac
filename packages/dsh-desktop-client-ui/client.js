@@ -22,6 +22,7 @@ window.__ModuleLoader__.load({
   "suggestions": "任务建议",
   "webPreview": "当前是独立的浏览器预览，与桌面版数据暂不自动同步。桌面版提供完整本机工作区与系统能力。",
   "desktopDownload": "下载桌面版预览包（macOS Apple Silicon）",
+  "cloudAccount": "账号与退出",
   "documents": "文档处理",
   "prompt.documents": "请处理我附上的文档。我的目标是：【写明要摘要、提取、改写、校对、翻译或对比的内容】。先确认实际读取的文件与范围，再直接交付结果；重要事实或引用标注页码或章节，无法读取或材料不足的部分明确说明。若尚未附文件或目标不明确，请只问完成任务所必需的问题。",
   "data": "数据分析与可视化",
@@ -53,6 +54,7 @@ window.__ModuleLoader__.load({
   "suggestions": "Task suggestions",
   "webPreview": "This browser preview runs independently; data does not sync with Desktop yet. The desktop app provides the full local workspace and system features.",
   "desktopDownload": "Download desktop preview (macOS Apple Silicon)",
+  "cloudAccount": "Account and sign out",
   "documents": "Work with documents",
   "prompt.documents": "Work with the attached document. My goal is: [specify what to summarize, extract, rewrite, proofread, translate, or compare]. Confirm which files and sections you actually read, then deliver the result. Cite pages or sections for important facts or quotations, and clearly identify anything unreadable or unsupported. If the file or goal is missing, ask only the questions needed to proceed.",
   "data": "Data analysis and charts",
@@ -84,6 +86,7 @@ window.__ModuleLoader__.load({
       suggestions: 'Suggestions de tâches',
       webPreview: 'Cette préversion Web fonctionne séparément : les données ne sont pas encore synchronisées avec l’application de bureau. Celle-ci donne accès à l’espace de travail local et aux fonctions système.',
       desktopDownload: 'Télécharger la préversion pour macOS Apple Silicon',
+      cloudAccount: 'Compte et déconnexion',
       documents: 'Traitement de documents',
       'prompt.documents': 'Traitez le document joint. Mon objectif est : [préciser ce qu’il faut résumer, extraire, réécrire, corriger, traduire ou comparer]. Confirmez les fichiers et passages réellement lus, puis livrez le résultat. Indiquez les pages ou sections pour les faits et citations importants, et signalez clairement ce qui est illisible ou non étayé. Si le fichier ou l’objectif manque, posez uniquement les questions nécessaires.',
       data: 'Analyse et visualisation',
@@ -250,6 +253,12 @@ window.__ModuleLoader__.load({
 
       function AtelierSuggestions({ input, inputActions }) {
         const [mode, setMode] = React.useState('work')
+        const [cloudAccount, setCloudAccount] = React.useState(false)
+        React.useEffect(() => {
+          if (window.dshDesktop) return
+          fetch('/cloud/auth/me').then(response => response.json())
+            .then(value => setCloudAccount(Boolean(value?.userId))).catch(() => undefined)
+        }, [])
         const fill = (key) => {
           const prompt = t(`prompt.${key}`)
           const draft = input?.draft || ''
@@ -273,7 +282,8 @@ window.__ModuleLoader__.load({
             React.createElement('a', {
               href: 'https://github.com/dengyier/Atelier_desktop_mac/releases/tag/atelier-v0.1.0-preview.2',
               target: '_blank', rel: 'noopener noreferrer'
-            }, t('desktopDownload'), ' ↗')
+            }, t('desktopDownload'), ' ↗'),
+            cloudAccount && React.createElement('a', { href: '/cloud/account' }, t('cloudAccount'))
           )
         )
       }

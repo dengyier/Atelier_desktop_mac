@@ -1,0 +1,10 @@
+.git
+.github
+.claude
+node_modules
+dist
+dist-dev
+out
+test
+docs
+*.log

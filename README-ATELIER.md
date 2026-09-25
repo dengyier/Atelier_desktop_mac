@@ -20,7 +20,9 @@ npm ci
 npm run dev
 ```
 
-For the same Atelier Harness interface in a local browser, run `npm run web:dev` and open the authenticated URL printed by the command. This uses a separate `~/.atelier-web` data directory and does not read or sync Desktop sessions, credentials, or workspaces. Set `ATELIER_WEB_HOME` to select another isolated directory and `ATELIER_WEB_PORT` to change the loopback port. The browser entry is a single-user development preview: it binds to `127.0.0.1`, and its startup URL is a credential. Do not expose that port or URL publicly. A public multiuser service needs separate authentication, per-user Harness containers, storage isolation, and resource limits before deployment.
+For the same Atelier Harness interface in a local browser, run `npm run web:dev` and open the authenticated URL printed by the command. This uses a separate `~/.atelier-web` data directory and does not read or sync Desktop sessions, credentials, or workspaces. Set `ATELIER_WEB_HOME` to select another isolated directory and `ATELIER_WEB_PORT` to change the loopback port. The browser entry is a single-user development preview: it binds to `127.0.0.1`, and its startup URL is a credential. Do not expose that port or URL publicly.
+
+The separate [multiuser web gateway prototype](docs/atelier-web-cloud.md) reuses Atelier site accounts, starts one constrained Docker runner and data volume per user, and keeps the provider API key in that user's Harness home. It is not the `web:dev` server and is not deployed by this repository's private-preview unit. Its current in-memory login sessions and fixed concurrency cap require further operations work before a public launch.
 
 For a local, ad-hoc-signed Apple Silicon package:
 

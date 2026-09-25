@@ -32,6 +32,7 @@ describe('Atelier Desktop client slot occupants', () => {
     }
     vm.runInNewContext(source, {
       document,
+      fetch: vi.fn(async () => ({ json: async () => ({}) })),
       navigator: { language: 'en-US' },
       window: {
         __ModuleLoader__: {

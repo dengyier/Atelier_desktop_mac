@@ -8,7 +8,7 @@ This workflow is **not ready to produce a signed release until an Apple Develope
 
 1. Enroll the publisher in the [Apple Developer Program](https://developer.apple.com/programs/). An individual or organization team must own the release identity. The DSH project certificate must not be reused for Atelier.
 2. In that team, create a **Developer ID Application** certificate for distribution outside the Mac App Store. Export the certificate **with its private key** as a password-protected `.p12` from Keychain Access. Record the Apple Team ID.
-3. Create an [App Store Connect API key](https://appstoreconnect.apple.com/access/integrations/api) authorized for notarization. Download its `.p8` file once, and record its Key ID and Issuer ID. Keep the `.p12` and `.p8` outside Git.
+3. In App Store Connect, request API access if prompted, then create a **Team API Key** under **Users and Access → Integrations → Team Keys**. An individual API key cannot use `notarytool`. Download the team's `.p8` file once, and record its Key ID and Issuer ID. Keep the `.p12` and `.p8` outside Git.
 4. In this repository's **Settings → Secrets and variables → Actions**, create these repository secrets:
 
    | Secret | Value |

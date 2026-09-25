@@ -6,8 +6,10 @@ import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const home = resolve(process.env.ATELIER_WEB_HOME || join(homedir(), '.atelier-web'))
+const workdir = resolve(process.env.ATELIER_WEB_WORKDIR || root)
 const preset = join(home, '.agent-presets', 'atelier')
 const port = Number(process.env.ATELIER_WEB_PORT || 3080)
+const trustedHost = process.env.ATELIER_WEB_TRUSTED_HOST
 
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
   throw new Error('ATELIER_WEB_PORT must be a TCP port between 1 and 65535')
@@ -30,11 +32,14 @@ try {
 const entry = join(root, 'build', 'harness-node-entry.mjs')
 const dsh = join(root, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
 const patch = join(root, 'build', 'dsh-desktop.patch.yml')
-const child = spawn(process.execPath, [
+const args = [
   '--expose-internals', entry, dsh, 'web', '--patch', patch,
   '--no-open', '--host', '127.0.0.1', '--port', String(port)
-], {
-  cwd: root,
+]
+if (trustedHost) args.push('--trusted-host', trustedHost)
+
+const child = spawn(process.execPath, args, {
+  cwd: workdir,
   env: { ...process.env, DSH_HOME: home },
   stdio: 'inherit'
 })

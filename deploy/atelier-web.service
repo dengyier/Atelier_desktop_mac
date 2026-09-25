@@ -1,0 +1,31 @@
+[Unit]
+Description=Atelier private web preview
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=atelierweb
+Group=atelierweb
+WorkingDirectory=/home/atelier_web/app
+Environment=HOME=/home/atelier_web/data
+Environment=PATH=/opt/atelier-node/bin:/usr/local/bin:/usr/bin:/bin
+Environment=ATELIER_WEB_HOME=/home/atelier_web/data
+Environment=ATELIER_WEB_WORKDIR=/home/atelier_web/data/workspace
+Environment=ATELIER_WEB_PORT=18081
+Environment=ATELIER_WEB_TRUSTED_HOST=at.artsmart.space
+ExecStart=/opt/atelier-node/bin/node /home/atelier_web/app/scripts/start-web.mjs
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/atelier_web/data
+MemoryMax=900M
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

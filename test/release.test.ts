@@ -414,7 +414,7 @@ describe('GitHub release contract', () => {
     )
   })
 
-  it('routes stable downloads through the website and previews through GitHub', async () => {
+  it('documents the Atelier local preview without upstream DSH release links', async () => {
     const readmes = await Promise.all(
       ['README.md', 'README.zh.md', 'README.ja.md', 'README.ru.md', 'README.es.md', 'README.pt.md'].map((file) =>
         readFile(path.join(projectRoot, file), 'utf8')
@@ -422,13 +422,14 @@ describe('GitHub release contract', () => {
     )
 
     for (const readme of readmes) {
-      expect(readme).toMatch(/https:\/\/(?:www\.)?dshdesktop\.com\/(?:#download|zh\/)/)
-      expect(readme).not.toContain('| Platform | Package | Download |')
-      expect(readme).not.toContain('| 平台 | 安装包 | 下载 |')
-      expect(readme).not.toContain('Coming soon')
-      expect(readme).not.toContain('即将发布')
-      expect(readme).toContain('https://github.com/dataelement/dsh-desktop/releases')
-      expect(readme).toContain('**Pre-release**')
+      expect(readme).toContain('# Atelier Desktop')
+      expect(readme).toContain('https://artsmart.space/')
+      expect(readme).toContain('https://github.com/dengyier/Atelier_desktop_mac')
+      expect(readme).toContain('npm ci')
+      expect(readme).toContain('npm run dev')
+      expect(readme).toContain('npm run package:dev:mac:arm64')
+      expect(readme).not.toContain('https://github.com/dataelement/dsh-desktop/releases')
+      expect(readme).not.toContain('dshdesktop.com')
       for (const asset of releaseAssets) {
         expect(readme).not.toContain(`releases/latest/download/${asset}`)
       }

@@ -56,6 +56,7 @@ describe('Atelier Desktop client slot occupants', () => {
       if (id === 'react') {
         return {
           createElement,
+          Fragment: 'fragment',
           useEffect: (effect: () => void | (() => void)) => effect(),
           useState: () => [mode, (next: string) => { mode = next }]
         }
@@ -112,14 +113,17 @@ describe('Atelier Desktop client slot occupants', () => {
     const sidebarName = registrations.find(
       ({ config }) => config.name === 'sidebar.brand.name'
     )!.component({}) as { type: unknown; props: Record<string, unknown> }
-    expect(sidebarName.type).toBe('span')
-    expect(sidebarName.props.children).toEqual(['atelier'])
+    expect(sidebarName.type).toBe('fragment')
+    expect((sidebarName.props.children as Array<{ props: { className: string; children: string[] } }>).map(
+      child => [child.props.className, child.props.children[0]]
+    )).toEqual([['at-word', 'atelier'], ['at-beta', 'BETA']])
 
     const sidebarMark = registrations.find(
       ({ config }) => config.name === 'sidebar.brand.mark'
     )!.component({ size: 24 }) as { type: unknown; props: Record<string, unknown> }
     expect(sidebarMark.type).toBe('span')
-    expect(sidebarMark.props.children).toEqual(['a'])
+    expect(sidebarMark.props.className).toBe('at-mark')
+    expect((sidebarMark.props.children as Array<{ type: string }>).map(child => child.type)).toEqual(['i', 'i', 'i'])
 
     const hero = registrations.find(
       ({ config }) => config.name === 'conversation.hero.presentation'

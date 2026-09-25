@@ -12,10 +12,12 @@ const readmes = [
 ]
 
 const requiredFacts = [
-  '@deepseek-ai/dsh@0.1.5-rc.2',
-  '--safe-mode',
-  'Cloudflare Quick Tunnel',
-  'NSIS',
+  'Atelier Desktop',
+  'mcp-for-blender',
+  'npm ci',
+  'npm run dev',
+  'npm run package:dev:mac:arm64',
+  'https://artsmart.space/',
   'docs/development.md',
   'docs/architecture.md'
 ]
@@ -26,14 +28,16 @@ describe('localized README parity', () => {
       const content = readFileSync(path, 'utf8')
 
       for (const fact of requiredFacts) expect(content).toContain(fact)
-      expect(content).not.toContain('@deepseek-ai/dsh@0.1.1-rc.1')
-      expect(content).not.toMatch(/NSIS\s*(?:and|与|と|и|y|e)\s*Portable/i)
+      expect(content).not.toContain('https://github.com/dataelement/dsh-desktop/releases')
+      expect(content).not.toContain('dsh-desktop-hero')
     })
   }
 
   it('keeps every relative Markdown link resolvable', () => {
     const documents = [
       ...readmes,
+      'README-ATELIER.md',
+      'RELEASE_NOTES.md',
       'docs/development.md',
       'docs/architecture.md',
       'docs/release-runbook.md',

@@ -1,18 +1,41 @@
-# Atelier Desktop (first local preview)
+# Atelier Desktop: local preview guide
 
-Atelier Desktop is a separate desktop app for art and 3D work. It builds on the MIT-licensed [DSH Desktop](https://github.com/dataelement/dsh-desktop) shell and bundles DeepSeek Harness `0.1.5-rc.2`. The creative preset and Atelier branding are maintained in this fork. Upstream components retain their own licenses and maintainers.
+Atelier Desktop is the desktop workspace for Atelier's art and AI workflows. It adapts the DeepSeek Harness runtime and the MIT-licensed DSH Desktop shell while keeping a separate Atelier application identity and profile. This document covers the current local preview; it is not a promise of a signed public installer or of multiuser cloud capacity.
 
-## Included
+## Product flow
 
-- Independent application IDs and profiles: `atelier-desktop` and `atelier-desktop-dev`. Startup does not import an existing DSH Web profile, sessions, or credentials.
-- `Atelier 创作模式` as the default preset for new sessions, with a local Blender workflow Skill and an `mcp-for-blender` stdio connector.
-- Atelier icons, sidebar brand, startup screen, and first-run preview notice.
-- Upstream automatic updates disabled until Atelier has its own signed release feed.
+1. Start a new task in **Everyday work** or **Design and creative** mode. The suggestion buttons place a draft in the composer so you can edit it before sending.
+2. Choose a workspace and model provider. New sessions use the **Atelier Creative Mode** preset unless you change it. This preset can discover local Skills, use the configured tools, and call the bundled Blender MCP connector when its external service is available.
+3. Ask for inspectable deliverables. For 3D work, request the editable `.blend` scene and rendered views. The Blender workflow Skill calls for opening and checking at least two views, and for identifying any visual claim that still needs human review.
+4. Review actual file cards and previews in the session. Confirm the file opens and downloads before treating it as handed over. A path or a model's statement by itself is not delivery.
 
-## Local run
+The PPT button enables the inherited editable PPTX workflow for that session. The curated **MCP connector market** can add a published connector to the Atelier preset; a new session is needed to confirm its tools load. Curated entries are discovery and configuration aids, not a guarantee that an external server is running or trustworthy. The community plugin market is hidden in this preview.
 
-Use Node 24. Run `npm ci`, then `npm run dev`. To make a local macOS arm64 preview, run `npm run package:dev:mac:arm64`; the unsigned DMG and zip appear under `dist-dev/`. Do not distribute the unsigned preview as a production installer.
+## Install and run
 
-Set up a model provider inside Atelier Desktop. Credentials from other DSH profiles are intentionally not copied. For Blender work, install Blender and `uvx`, enable the `mcp-for-blender==2.0.4` add-on in Blender, and start its server on `127.0.0.1:9876`. The connector's presence alone does not create geometry; check the tool connection and open the saved `.blend` and rendered views before treating a 3D result as delivered.
+Requirements: macOS, Node.js 24, npm, and a model provider that you configure in the app.
 
-This preview is a local desktop app. It does not replace the multiuser Atelier web backend. The cloned upstream release workflow has not been adapted for Atelier publication; builds should use the local commands above.
+```sh
+npm ci
+npm run dev
+```
+
+For a local, unsigned Apple Silicon package:
+
+```sh
+npm run package:dev:mac:arm64
+```
+
+Output is under `dist-dev/`. The repository also contains inherited Windows packaging code, but this guide does not claim that an Atelier Windows build has been validated or published.
+
+### Blender connection
+
+The preset declares a stdio connector using `uvx --python 3.11 mcp-for-blender==2.0.4`. Install `uvx` and Blender separately, enable the matching Blender MCP add-on, and start the add-on service on `127.0.0.1:9876`. The connector can be configured before Blender is running; tool calls will fail until the service is reachable. Check the connection, save the scene, and inspect the saved `.blend` and rendered images.
+
+## Data and release boundary
+
+Atelier Desktop uses `atelier-desktop` in production builds and `atelier-desktop-dev` in development. It does not import another DSH profile's sessions, plugins, or credentials. On macOS, the development Harness home is under `~/Library/Application Support/atelier-desktop-dev/harness`. Workspace files remain in the workspace you selected.
+
+Atelier has no signed update feed. The inherited upstream release workflow has not been adapted for public Atelier publication, so use local build commands for previews. The desktop app is distinct from Atelier's multiuser web service.
+
+The host is derived from [DSH Desktop](https://github.com/dataelement/dsh-desktop); the Agent runtime comes from [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Keep their licenses and component-specific notices when redistributing. See [LICENSE](LICENSE) and the notices in the relevant bundled packages.

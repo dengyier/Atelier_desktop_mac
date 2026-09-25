@@ -1,134 +1,46 @@
-# Atelier_desktop_mac
+# Atelier Desktop
 
-Atelier Desktop is a macOS-focused art and creative-work adaptation of [DSH Desktop](https://github.com/dataelement/dsh-desktop). The upstream project documentation is preserved below.
+**Art and AI, in one local workspace.** Atelier Desktop is a macOS-focused desktop preview for turning an artistic brief into research, working files, editable creative output, and visual checks. It is built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) and the MIT-licensed [DSH Desktop](https://github.com/dataelement/dsh-desktop) host; Atelier maintains its own identity, creative preset, interface, and isolated user profile.
 
-<h1 align="center">
-  <img src="docs/images/readme-logo-black-v020.png" width="64" alt="DSH Desktop logo" valign="middle" />
-  DSH Desktop
-</h1>
+[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
 
-<p align="center">
-  A local-first, cross-platform desktop app for
-  <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a>.
-</p>
+## What is in this preview
 
-<p align="center">
-  <a href="README.md">English</a> · <a href="README.zh.md">简体中文</a> · <a href="README.ja.md">日本語</a> · <a href="README.ru.md">Русский</a> · <a href="README.es.md">Español</a> · <a href="README.pt.md">Português</a>
-</p>
+- **Creative work:** the default *Atelier Creative Mode* includes a Blender workflow Skill and a configured `mcp-for-blender` connector. Use it for installations, geometric sculpture, exhibition scenes, and other 3D briefs. Blender and its MCP add-on are separate prerequisites.
+- **Everyday work:** document processing, data analysis and visualization, meeting notes, research reports, and slides start from editable prompt suggestions. The suggestions fill the composer; they do not submit a task automatically.
+- **Files you can inspect:** the workflow asks for actual project files and rendered views, then checks framing and other visible details before reporting a 3D result. A filename alone is not proof that a deliverable was created or verified.
+- **Tools and models:** configure a model provider in the app. The MCP connector market provides curated art and design entries; adding a connector configures the Atelier preset and must be checked in a new session. The community plugin market is currently hidden.
+- **Local desktop host:** workspaces, sessions, and settings are held in Atelier Desktop's own application profile, separate from an existing DSH installation. The interface supports Chinese, English, and French. The bundled PPT mode can produce editable PPTX files.
 
-<p align="center">
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-171513.svg" /></a>
-  <img alt="macOS" src="https://img.shields.io/badge/macOS-Apple%20Silicon%20%7C%20Intel-171513.svg" />
-  <img alt="Windows" src="https://img.shields.io/badge/Windows-x64-171513.svg" />
-</p>
+This is an **early local preview**. There is no Atelier signed release feed or automatic updater. The repository contains upstream cross-platform code, but this fork's local instructions and validation currently target macOS; do not treat the upstream DSH installers or release claims as Atelier releases. The desktop app does not replace the multiuser Atelier web service.
 
-![DSH Desktop overview with portable presets, model providers, phone control, and editable PPT generation](docs/images/dsh-desktop-hero-v021.png)
+## Run locally
 
-<p align="center"><strong>Use official DeepSeek models or mainstream third-party providers, manage portable Agent presets, continue Harness sessions from your phone, and turn source material into editable PPTX decks.</strong></p>
-
-DSH Desktop packages the local DeepSeek Harness experience as an installed desktop application. It starts Harness automatically, keeps profiles, plugins, workspaces, model settings, and sessions outside the application directory, and opens the full Harness interface as soon as the local runtime is ready.
-
-> [!IMPORTANT]
-> DSH Desktop is an early preview built on the rapidly evolving `@deepseek-ai/dsh@0.1.5-rc.2`. macOS releases are code-signed and notarized by Apple. Windows x64 installers are code-signed; Windows security warnings may still decrease gradually as the publisher builds download and installation reputation.
-
-## Download
-
-We offer stable and preview releases: download the **stable release**, recommended for everyday use, from our [official website](https://www.dshdesktop.com/#download). To try a **preview release**, choose a version marked **Pre-release** on [GitHub Releases](https://github.com/dataelement/dsh-desktop/releases).
-
-Preview releases include our newest features and closely track the latest official DeepSeek Harness versions. They may be incompatible with community plugins and are **not recommended for general users**. Early adopters are welcome to try them and share feedback in our community; we roll out updates to the wider community only after validation by early adopters.
-
-Installed builds check for updates shortly after startup and every six hours. When a new version is available, DSH Desktop asks before downloading it; installation begins only after you choose **Restart and install**. You can also check manually from the application menu or skip one version without hiding future releases.
-
-## Community
-
-<p align="center">
-  Scan the QR code below with WeChat to join the DSH Desktop community group.<br />
-  <img src="docs/images/wechat-group-20260815.png" width="220" alt="DSH Desktop WeChat group QR code" /><br />
-  Prefer Discord? <a href="https://discord.gg/7Xgf3qe3Qp">Join the DSH Desktop Discord community</a>.
-</p>
-
-## What DSH Desktop adds
-
-DeepSeek Harness already provides the Agent runtime and Web UI. DSH Desktop adds the native host capabilities needed for a practical desktop product:
-
-- Starts and stops Harness without requiring a separate CLI or browser tab
-- Uses the native system directory picker to add and manage project workspaces
-- Supports official DeepSeek models and mainstream third-party model providers
-- Imports and exports complete custom Agent presets as portable [`.dshpreset` packages](docs/preset-packages.md), with conflict checks and a trust warning before installation
-- Turns source material into editable PPTX decks through the built-in PPT mode
-- Preserves profiles, plugins, workspaces, sessions, and model settings across app upgrades
-- Detects startup and frontend plugin failures, keeps diagnostics in `harness.log`, and offers guided recovery actions
-- Provides a non-destructive Safe Mode that temporarily blocks third-party plugins
-- Lets a paired phone continue sessions over the local network or an optional temporary public tunnel
-- Checks for desktop updates and keeps download and installation under user control
-- Adapts native menus, titlebar behavior, window focus, theme, and application branding for macOS and Windows
-
-## PPT generation
-
-Enable the **PPT** button, choose a template, and describe the deck you need. The built-in catalog includes **16 templates and 192 layouts** with editable PPTX output. Previews use English; decks can use English or Chinese, with corresponding font settings. Preview language does not determine output language.
-
-PPT is preinstalled, and its automatic instructions apply only to sessions where the PPT button is enabled. See the [PPT runtime guide](packages/ppt-runtime/README.md) for templates, validation, and source acknowledgments.
-
-## Phone access
-
-Choose **Connect Phone…** from the `Harness` menu and scan the pairing code. The desktop asks you to approve the connection before the phone can access sessions.
-
-Harness itself remains on a random `127.0.0.1` port. Phone access uses a separate paired bridge. It can stay on the local network or, when you choose remote access, use a temporary Cloudflare Quick Tunnel. Disconnecting the phone from the desktop invalidates the mobile session.
-
-If Cloudflare fails to start, the app tries Pinggy. If a Cloudflare pairing link appears but your phone cannot open it, choose **Can’t open? Try another link** to switch to Pinggy.
-
-## Safe Mode and recovery
-
-If a third-party plugin interferes with startup or rendering, DSH Desktop can identify the implicated plugin from runtime and frontend evidence and open a guided recovery surface.
-
-Choose **Restart as Safe Mode…** from the `Harness` menu to start an isolated profile containing only official core bundles. The Agent, sessions, model settings, and workspaces remain available while third-party plugins from the normal profile stay blocked. You can remove selected plugins or return to a normal launch from the Safe Mode banner.
-
-Recovery screens check for compatible plugin updates. When available, you can upgrade an affected plugin; Safe Mode also offers batch upgrades. For help, hover over **WeChat group** to display its QR code, or click **Discord** to open the community.
-
-If the normal interface cannot be reached, start DSH Desktop with `--safe-mode`. On macOS:
+Use **Node.js 24** on macOS. From this repository:
 
 ```sh
-open -a "DSH Desktop" --args --safe-mode
+npm ci
+npm run dev
 ```
 
-## Local data and security
+Set up your model provider in **Settings → Models**. Atelier does not import API keys, sessions, or plugins from another DSH profile. To build an unsigned local Apple Silicon preview:
 
-- The Harness Web UI is served only on a random loopback port.
-- The renderer has no Node.js privileges and uses context isolation and sandboxing.
-- Webviews, untrusted in-app navigation, and unexpected permission requests are blocked.
-- External web links open in the system browser.
-- User profiles and sessions live under Electron's per-user application data directory, not inside the installed app.
-- Phone access requires a short-lived pairing token and explicit desktop approval.
+```sh
+npm run package:dev:mac:arm64
+```
 
-## Platform support
+The local preview artifacts are written to `dist-dev/`; they are not production installers.
 
-| Platform | Distribution | Status |
-| --- | --- | --- |
-| macOS Apple Silicon | Signed and notarized DMG/ZIP | Supported |
-| macOS Intel | Signed and notarized DMG/ZIP | Supported |
-| Windows x64 | Code-signed NSIS installer | Supported |
-| Windows ARM64 | — | Not currently supported |
-| Linux | — | Not currently supported |
+For Blender tasks, install Blender and `uvx`, enable the `mcp-for-blender==2.0.4` add-on, and start its service on `127.0.0.1:9876`. Check that the MCP tools connect before asking the Agent to model. See [the detailed Atelier setup and delivery guide](README-ATELIER.md).
 
-Harness includes target-native dependencies, so every release artifact is built on the matching operating system and architecture.
+## Development
 
-## Development and architecture
+Run `npm test`, `npm run typecheck`, and `npm run build`, then inspect the affected flow in the app. Harness customizations live in host code, Atelier plugins, and tracked compatibility patches. The inherited [architecture](docs/architecture.md), [development guide](docs/development.md), and [PPT runtime guide](packages/ppt-runtime/README.md) describe the underlying host; some of those documents still use upstream DSH names and release procedures.
 
-Contributions are welcome. Start with the public engineering documentation:
+## Data, security, and provenance
 
-- [Development guide](docs/development.md) — setup, validation, patch maintenance, and target-native packaging
-- [Architecture](docs/architecture.md) — runtime flow, persistent data, security boundaries, recovery, mobile access, and updates
-- [Release runbook](docs/release-runbook.md) — signing and publication controls
-- [Preset package format](docs/preset-packages.md) — portable Agent preset contract
+Atelier starts a local Harness service and uses its own per-user data directory. The renderer runs with isolation and sandboxing. Model providers and installed MCP services may send data to their configured endpoints or access workspace files according to their permissions; review a connector before using it with private work. Do not commit credentials or client files.
 
-Before submitting a change, run `npm test`, `npm run typecheck`, and `npm run build`, then exercise the affected real application flow. Never include real API keys in issues, logs, screenshots, or test data.
+Atelier Desktop is based on DSH Desktop under the [MIT License](LICENSE). DeepSeek Harness, bundled packages, MCP projects, and other third-party components retain their respective licenses and maintainers. Atelier is an independent adaptation and is not an official DeepSeek or DSH Desktop release.
 
-## Friends
-
-[dsh-market](https://github.com/dsh-market/dsh-market) is the community plugin market for DeepSeek Harness. Browse and search plugins, preview screenshots, install or update packages, enable or disable plugins, and switch themes from the Harness interface.
-
-## License
-
-DSH Desktop is open source under the [MIT License](LICENSE).
-
-DeepSeek Harness and its dependencies remain subject to their respective upstream licenses and trademark policies. DSH Desktop is an independent community desktop application.
+[Atelier website](https://artsmart.space/) · [Project repository](https://github.com/dengyier/Atelier_desktop_mac)

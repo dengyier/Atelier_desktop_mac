@@ -187,27 +187,27 @@ window.__ModuleLoader__.load({
     }
     const styles = `.atelier-home-hero{text-align:center;padding:20px 16px 32px;color:var(--dsw-alias-label-primary)}.atelier-home-eyebrow{display:block;margin-bottom:14px;color:var(--dsw-alias-state-business-primary);font-size:11px;font-weight:700;letter-spacing:.18em}.atelier-home-title{margin:0 0 10px;font-size:clamp(30px,3vw,42px);font-weight:650;letter-spacing:-.05em;line-height:1.25}.atelier-home-subtitle{margin:0;color:var(--dsw-alias-label-secondary);font-size:14px;line-height:1.6}.atelier-home-actions{width:100%;box-sizing:border-box;padding:0 16px 2px}.atelier-home-tabs{display:flex;justify-content:center;gap:4px;width:max-content;max-width:100%;margin:0 auto 36px;padding:4px;border-radius:22px;background:var(--dsw-alias-interactive-bg-hover)}.atelier-home-tabs button{border:0;border-radius:18px;padding:7px 14px;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:12px;white-space:nowrap;cursor:pointer}.atelier-home-tabs button[aria-selected=true]{background:var(--dsw-alias-state-business-primary);color:var(--dsw-alias-bg-base);font-weight:600}.atelier-home-tabs button:hover:not([aria-selected=true]){background:var(--dsw-alias-interactive-bg-hover-solid)}.atelier-home-suggestions{display:flex;align-items:center;gap:9px;overflow-x:auto;scrollbar-width:none}.atelier-home-suggestions::-webkit-scrollbar{display:none}.atelier-home-suggestions button{flex:none;border:1px solid var(--dsw-alias-border-l2);border-radius:20px;background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-secondary);padding:8px 13px;font:inherit;font-size:12px;white-space:nowrap;cursor:pointer}.atelier-home-suggestions button:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover);border-color:var(--dsw-alias-state-business-primary)}.atelier-home-actions button:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.atelier-home-suggestions button:disabled{opacity:.5;cursor:default}@media(max-width:640px){.atelier-home-hero{padding-bottom:24px}.atelier-home-tabs{margin-bottom:22px}.atelier-home-actions{padding:0 10px}}`
 
+    const brandStyles = `.at-logo{text-decoration:none}.at-mark{position:relative;display:inline-block;width:24px;height:28px;color:var(--dsw-alias-label-primary)}.at-mark i{position:absolute;width:5px;border-radius:999px;background:currentColor;transform:rotate(-18deg)}.at-mark i:nth-child(1){left:2px;top:13px;height:14px}.at-mark i:nth-child(2){left:9px;top:3px;height:23px}.at-mark i:nth-child(3){left:16px;top:1px;height:14px}.at-word{font-size:20px;font-weight:700;letter-spacing:-.05em;line-height:1}.at-beta{box-sizing:border-box;display:inline-flex;align-items:center;height:17px;padding:0 4px;border:1px solid var(--dsw-alias-border-l2);border-radius:3px;color:var(--dsw-alias-label-secondary);font-size:8px;font-weight:700;letter-spacing:.12em;line-height:1}`
+
     function installStyles() {
       if (document.getElementById(STYLE_ID)) return () => undefined
       const style = document.createElement('style')
       style.id = STYLE_ID
       style.dataset.pluginCss = NS
-      style.textContent = styles
+      style.textContent = styles + brandStyles
       document.head.appendChild(style)
       return () => style.remove()
     }
 
     function AtelierMark() {
-      return React.createElement('span', {
-        'aria-hidden': 'true',
-        style: { display: 'inline-block', fontSize: 22, fontWeight: 700, lineHeight: 1 }
-      }, 'a')
+      return React.createElement('span', { className: 'at-mark', 'aria-hidden': 'true' },
+        React.createElement('i'), React.createElement('i'), React.createElement('i'))
     }
 
     function AtelierName() {
-      return React.createElement('span', {
-        style: { fontSize: 18, fontWeight: 700, letterSpacing: '-0.04em' }
-      }, 'atelier')
+      return React.createElement(React.Fragment, null,
+        React.createElement('span', { className: 'at-word' }, 'atelier'),
+        React.createElement('span', { className: 'at-beta' }, 'BETA'))
     }
 
     const inject = ['slots', 'locale']

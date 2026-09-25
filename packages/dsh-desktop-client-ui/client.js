@@ -20,6 +20,8 @@ window.__ModuleLoader__.load({
   "creative": "设计创意",
   "modes": "任务模式",
   "suggestions": "任务建议",
+  "webPreview": "当前是独立的浏览器预览，与桌面版数据暂不自动同步。桌面版提供完整本机工作区与系统能力。",
+  "desktopDownload": "下载桌面版预览包（macOS Apple Silicon）",
   "documents": "文档处理",
   "prompt.documents": "请处理我附上的文档。我的目标是：【写明要摘要、提取、改写、校对、翻译或对比的内容】。先确认实际读取的文件与范围，再直接交付结果；重要事实或引用标注页码或章节，无法读取或材料不足的部分明确说明。若尚未附文件或目标不明确，请只问完成任务所必需的问题。",
   "data": "数据分析与可视化",
@@ -49,6 +51,8 @@ window.__ModuleLoader__.load({
   "creative": "Creative design",
   "modes": "Task mode",
   "suggestions": "Task suggestions",
+  "webPreview": "This browser preview runs independently; data does not sync with Desktop yet. The desktop app provides the full local workspace and system features.",
+  "desktopDownload": "Download desktop preview (macOS Apple Silicon)",
   "documents": "Work with documents",
   "prompt.documents": "Work with the attached document. My goal is: [specify what to summarize, extract, rewrite, proofread, translate, or compare]. Confirm which files and sections you actually read, then deliver the result. Cite pages or sections for important facts or quotations, and clearly identify anything unreadable or unsupported. If the file or goal is missing, ask only the questions needed to proceed.",
   "data": "Data analysis and charts",
@@ -78,6 +82,8 @@ window.__ModuleLoader__.load({
       creative: 'Création visuelle',
       modes: 'Mode de travail',
       suggestions: 'Suggestions de tâches',
+      webPreview: 'Cette préversion Web fonctionne séparément : les données ne sont pas encore synchronisées avec l’application de bureau. Celle-ci donne accès à l’espace de travail local et aux fonctions système.',
+      desktopDownload: 'Télécharger la préversion pour macOS Apple Silicon',
       documents: 'Traitement de documents',
       'prompt.documents': 'Traitez le document joint. Mon objectif est : [préciser ce qu’il faut résumer, extraire, réécrire, corriger, traduire ou comparer]. Confirmez les fichiers et passages réellement lus, puis livrez le résultat. Indiquez les pages ou sections pour les faits et citations importants, et signalez clairement ce qui est illisible ou non étayé. Si le fichier ou l’objectif manque, posez uniquement les questions nécessaires.',
       data: 'Analyse et visualisation',
@@ -175,7 +181,19 @@ window.__ModuleLoader__.load({
         'status.waitingApproval': 'En attente d’approbation',
         'status.waitingAnswer': 'En attente de réponse'
       },
-      'settings.models': { nav: 'Modèles', title: 'Modèles' },
+      'settings.models': {
+        nav: 'Modèles', title: 'Modèles',
+        intro: 'Choisissez un fournisseur et renseignez sa clé API pour utiliser ses modèles.',
+        add: 'Ajouter un fournisseur', customAdd: 'Ajouter un fournisseur personnalisé',
+        provider: 'Fournisseur', providerSearch: 'Rechercher un fournisseur',
+        cancel: 'Annuler', apply: 'Enregistrer',
+        keyInput: 'Clé API', keyPlaceholder: 'Saisissez votre clé API',
+        customized: 'Paramètres avancés',
+        onboardingTitle: 'Choisir un modèle dans les paramètres',
+        onboardingDescription: 'Avant de lancer une tâche, ouvrez Paramètres → Modèles, choisissez un fournisseur comme DeepSeek, puis saisissez sa clé API. Vous pouvez explorer Atelier avant cette étape.',
+        onboardingOpenSettings: 'Ouvrir les paramètres des modèles',
+        onboardingLater: 'Configurer plus tard'
+      },
       'settings.plugins': { nav: 'Extensions', title: 'Extensions' },
       'settings.agentPreset': {
         nav: 'Préréglages de l’agent',
@@ -189,12 +207,14 @@ window.__ModuleLoader__.load({
 
     const brandStyles = `.at-logo{text-decoration:none}.at-mark{position:relative;display:inline-block;width:24px;height:28px;color:var(--dsw-alias-label-primary)}.at-mark i{position:absolute;width:5px;border-radius:999px;background:currentColor;transform:rotate(-18deg)}.at-mark i:nth-child(1){left:2px;top:13px;height:14px}.at-mark i:nth-child(2){left:9px;top:3px;height:23px}.at-mark i:nth-child(3){left:16px;top:1px;height:14px}.at-word{font-size:20px;font-weight:700;letter-spacing:-.05em;line-height:1}.at-beta{box-sizing:border-box;display:inline-flex;align-items:center;height:17px;padding:0 4px;border:1px solid var(--dsw-alias-border-l2);border-radius:3px;color:var(--dsw-alias-label-secondary);font-size:8px;font-weight:700;letter-spacing:.12em;line-height:1}`
 
+    const webStyles = `.atelier-home-web-invite{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px auto 0;padding:12px 14px;max-width:720px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:1.5}.atelier-home-web-invite a{flex:none;color:var(--dsw-alias-state-business-primary);font-weight:600;text-decoration:none}.atelier-home-web-invite a:hover{text-decoration:underline}.atelier-home-web-invite a:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:3px}@media(max-width:640px){.atelier-home-web-invite{align-items:flex-start;flex-direction:column}}`
+
     function installStyles() {
       if (document.getElementById(STYLE_ID)) return () => undefined
       const style = document.createElement('style')
       style.id = STYLE_ID
       style.dataset.pluginCss = NS
-      style.textContent = styles + brandStyles
+      style.textContent = styles + brandStyles + webStyles
       document.head.appendChild(style)
       return () => style.remove()
     }
@@ -247,6 +267,13 @@ window.__ModuleLoader__.load({
               key, type: 'button', disabled: !inputActions,
               onClick: () => fill(key)
             }, t(key)))
+          ),
+          !window.dshDesktop && React.createElement('div', { className: 'atelier-home-web-invite' },
+            React.createElement('span', null, t('webPreview')),
+            React.createElement('a', {
+              href: 'https://github.com/dengyier/Atelier_desktop_mac/releases/tag/atelier-v0.1.0-preview.2',
+              target: '_blank', rel: 'noopener noreferrer'
+            }, t('desktopDownload'), ' ↗')
           )
         )
       }

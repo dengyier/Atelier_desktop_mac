@@ -42,6 +42,14 @@ function replaceIconLink(contents, file) {
   return contents.replace(matches[0], desktop)
 }
 
+function replacePageTitle(contents, file) {
+  if (contents.includes('<title>Atelier</title>')) return contents
+  if (!contents.includes('<title>DeepSeek Harness</title>')) {
+    throw new Error(`Could not update Atelier branding in ${file}: unexpected page title`)
+  }
+  return contents.replace('<title>DeepSeek Harness</title>', '<title>Atelier</title>')
+}
+
 /**
  * Point the web manifest's icon at the desktop logo.
  *
@@ -72,7 +80,8 @@ await copyFile(lightSource, lightDestination)
 await copyFile(darkSource, darkDestination)
 
 const index = await readFile(indexPath, 'utf8')
-await writeFile(indexPath, replaceIconLink(index, path.relative(projectRoot, indexPath)))
+const brandedIndex = replaceIconLink(index, path.relative(projectRoot, indexPath))
+await writeFile(indexPath, replacePageTitle(brandedIndex, path.relative(projectRoot, indexPath)))
 
 const manifest = await readFile(manifestPath, 'utf8')
 await writeFile(

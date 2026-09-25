@@ -4,6 +4,12 @@ module.exports = {
   ...packageJson.build,
   appId: 'space.artsmart.atelier.desktop.dev',
   productName: 'Atelier Desktop Dev',
+  mac: {
+    ...packageJson.build.mac,
+    identity: '-',
+    entitlements: 'build/entitlements.preview.mac.plist',
+    entitlementsInherit: 'build/entitlements.preview.mac.plist'
+  },
   directories: {
     ...packageJson.build.directories,
     output: 'dist-dev'

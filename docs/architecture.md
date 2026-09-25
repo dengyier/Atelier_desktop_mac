@@ -21,6 +21,12 @@ flowchart TD
 
 On macOS, Harness runs in an Electron UtilityProcess with Node capabilities. On Windows, it is launched with the bundled target-native Node.js executable. Cordis HMR's `--expose-internals` permission is granted to that isolated process and never to the web renderer.
 
+## Atelier browser entry
+
+The Atelier fork also runs the existing Harness Web UI without Electron via `npm run web:dev`. This entry uses the same tracked Atelier patch and client plugin as Desktop, starts a separate Harness profile in `~/.atelier-web` (or `ATELIER_WEB_HOME`), and listens only on `127.0.0.1`. A startup token establishes the browser session. The browser-only home panel identifies this as an independent preview and links to the macOS desktop download. Desktop sessions, files, and settings are not synchronized with this profile.
+
+This entry is a single-user local preview. A public service must authenticate accounts before access and provision a separate Harness process or container, workspace storage, model secrets, and resource limits per user. A shared Harness process cannot safely isolate users or their local file and tool permissions. Cross-device account and artifact synchronization is a later layer and is not provided by this preview.
+
 ## Startup flow
 
 1. Configure a stable production or development application identity and user-data directory.

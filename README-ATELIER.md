@@ -20,7 +20,9 @@ npm ci
 npm run dev
 ```
 
-For a local, unsigned Apple Silicon package:
+For the same Atelier Harness interface in a local browser, run `npm run web:dev` and open the authenticated URL printed by the command. This uses a separate `~/.atelier-web` data directory and does not read or sync Desktop sessions, credentials, or workspaces. Set `ATELIER_WEB_HOME` to select another isolated directory and `ATELIER_WEB_PORT` to change the loopback port. The browser entry is a single-user development preview: it binds to `127.0.0.1`, and its startup URL is a credential. Do not expose that port or URL publicly. A public multiuser service needs separate authentication, per-user Harness containers, storage isolation, and resource limits before deployment.
+
+For a local, ad-hoc-signed Apple Silicon package:
 
 ```sh
 npm run package:dev:mac:arm64
@@ -36,6 +38,6 @@ The preset declares a stdio connector using `uvx --python 3.11 mcp-for-blender==
 
 Atelier Desktop uses `atelier-desktop` in production builds and `atelier-desktop-dev` in development. It does not import another DSH profile's sessions, plugins, or credentials. On macOS, the development Harness home is under `~/Library/Application Support/atelier-desktop-dev/harness`. Workspace files remain in the workspace you selected.
 
-Atelier has no signed update feed. The [Atelier signed macOS release workflow](docs/atelier-signed-release.md) is configured but cannot produce a signed release until an Apple Developer Program team and its credentials are available. The inherited DSH release workflow remains unsuitable for Atelier; use the [Atelier preview workflow](docs/atelier-preview-release.md) or local build commands for unsigned previews. The desktop app is distinct from Atelier's multiuser web service.
+Atelier has no signed update feed. The [Atelier signed macOS release workflow](docs/atelier-signed-release.md) is configured but cannot produce a Developer ID signed release until an Apple Developer Program team and its credentials are available. The inherited DSH release workflow remains unsuitable for Atelier; use the [Atelier preview workflow](docs/atelier-preview-release.md) or local build commands for ad-hoc-signed previews. The desktop app is distinct from Atelier's multiuser web service.
 
 The host is derived from [DSH Desktop](https://github.com/dataelement/dsh-desktop); the Agent runtime comes from [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Keep their licenses and component-specific notices when redistributing. See [LICENSE](LICENSE) and the notices in the relevant bundled packages.

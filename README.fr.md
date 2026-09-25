@@ -1,6 +1,6 @@
-# Atelier Desktop
+# Atelier Desktop et préversion Web
 
-**L’art et l’IA dans un même espace de travail local.** Atelier Desktop est une préversion pour macOS qui aide à transformer une intention artistique en recherches, fichiers de travail, créations modifiables et vérifications visuelles. L’application s’appuie sur [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) et sur l’hôte [DSH Desktop](https://github.com/dataelement/dsh-desktop), distribué sous licence MIT. Atelier possède sa propre identité, son mode créatif, son interface et un profil utilisateur distinct.
+**L’art et l’IA dans un même espace de travail.** Ce dépôt héberge une préversion pour macOS et une préversion locale pour navigateur. Toutes deux utilisent la même interface Atelier, le même mode créatif et [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). L’application de bureau adapte l’hôte [DSH Desktop](https://github.com/dataelement/dsh-desktop), distribué sous licence MIT. Les sessions et les réglages des deux versions restent séparés pour le moment.
 
 [English](README.md) · [简体中文](README.zh.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
 
@@ -23,7 +23,11 @@ npm ci
 npm run dev
 ```
 
-Configurez votre fournisseur de modèles dans **Paramètres → Modèles**. Atelier n’importe ni les clés API, ni les sessions, ni les extensions d’un autre profil DSH. Pour créer une préversion locale non signée sur un Mac Apple Silicon :
+Configurez votre fournisseur de modèles dans **Paramètres → Modèles**. Atelier n’importe ni les clés API, ni les sessions, ni les extensions d’un autre profil DSH.
+
+Pour utiliser la même interface dans un navigateur local, exécutez `npm run web:dev`, puis ouvrez l’URL authentifiée affichée dans le terminal. Les données sont stockées séparément dans `~/.atelier-web`. Le service n’écoute que sur `127.0.0.1` : l’URL de démarrage donne accès à la session et ne doit pas être partagée. Une mise en ligne multiutilisateur exige au préalable une authentification et une isolation des processus Harness, des fichiers et des secrets par utilisateur.
+
+Pour créer une préversion locale avec signature ad hoc sur un Mac Apple Silicon :
 
 ```sh
 npm run package:dev:mac:arm64

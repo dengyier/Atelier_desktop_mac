@@ -1,6 +1,6 @@
-# Atelier Desktop
+# Atelier Desktop and Web preview
 
-**Art and AI, in one local workspace.** Atelier Desktop is a macOS-focused desktop preview for turning an artistic brief into research, working files, editable creative output, and visual checks. It is built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) and the MIT-licensed [DSH Desktop](https://github.com/dataelement/dsh-desktop) host; Atelier maintains its own identity, creative preset, interface, and isolated user profile.
+**Art and AI, in one workspace.** This repository hosts the macOS-focused Atelier Desktop preview and an independent local browser preview. Both use the same Atelier interface, creative preset, and [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) runtime; the desktop host adapts the MIT-licensed [DSH Desktop](https://github.com/dataelement/dsh-desktop). Their sessions and settings are separate for now.
 
 [English](README.md) · [简体中文](README.zh.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
 
@@ -23,7 +23,11 @@ npm ci
 npm run dev
 ```
 
-Set up your model provider in **Settings → Models**. Atelier does not import API keys, sessions, or plugins from another DSH profile. To build an unsigned local Apple Silicon preview:
+Set up your model provider in **Settings → Models**. Atelier does not import API keys, sessions, or plugins from another DSH profile.
+
+To open the same Atelier interface in a local browser, run `npm run web:dev` and use the authenticated URL printed in the terminal. This preview stores data under `~/.atelier-web`, independently of Desktop. It listens only on `127.0.0.1`; the startup URL is a credential and must not be shared. Public multiuser access requires account authentication and an isolated Harness runtime, files, and secrets for each user before deployment.
+
+To build a locally ad-hoc-signed Apple Silicon preview:
 
 ```sh
 npm run package:dev:mac:arm64

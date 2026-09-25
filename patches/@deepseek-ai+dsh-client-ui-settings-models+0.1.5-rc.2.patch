@@ -1,5 +1,5 @@
 diff --git a/node_modules/@deepseek-ai/dsh-client-ui-settings-models/lib/client.js b/node_modules/@deepseek-ai/dsh-client-ui-settings-models/lib/client.js
-index aa8ef80..7071da4 100644
+index aa8ef80..b789104 100644
 --- a/node_modules/@deepseek-ai/dsh-client-ui-settings-models/lib/client.js
 +++ b/node_modules/@deepseek-ai/dsh-client-ui-settings-models/lib/client.js
 @@ -64,6 +64,38 @@ window.__ModuleLoader__.load({
@@ -661,7 +661,33 @@ index aa8ef80..7071da4 100644
  								},
  								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconPlusOutline16, { size: 14 }), t("add")]
  							}), state.namespaces.has("llm-pi-ai") && (0, react_jsx_runtime.jsxs)("button", {
-@@ -2294,35 +2615,50 @@ window.__ModuleLoader__.load({
+@@ -2268,7 +2589,7 @@ window.__ModuleLoader__.load({
+ 		}
+ 		//#endregion
+ 		//#region \0dsh-css:/home/runner/work/deepseek-harness/deepseek-harness/packages/client/ui-settings-models/src/client/DeepSeekOnboardingDialog.module.css.mjs
+-		const css$1 = ".GL8Viq_description{color:var(--dsw-alias-label-secondary);margin:0;font-size:14px;line-height:24px}.GL8Viq_editor{margin-top:24px}@media (width<=560px){.GL8Viq_editor{margin-top:20px}}";
++		const css$1 = ".GL8Viq_description{color:var(--dsw-alias-label-secondary);margin:0;font-size:14px;line-height:24px}.GL8Viq_actions{display:flex;justify-content:flex-end;gap:8px;margin-top:24px}@media (width<=560px){.GL8Viq_actions{flex-direction:column-reverse;margin-top:20px}}";
+ 		const tagId$1 = "@deepseek-ai/dsh-client-ui-settings-models/DeepSeekOnboardingDialog.module.css";
+ 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
+ 			const tag = document.createElement("style");
+@@ -2279,82 +2600,77 @@ window.__ModuleLoader__.load({
+ 		}
+ 		var DeepSeekOnboardingDialog_module_css_default = {
+ 			"description": "GL8Viq_description",
+-			"editor": "GL8Viq_editor"
++			"actions": "GL8Viq_actions"
+ 		};
+ 		//#endregion
+ 		//#region lib/types/client/DeepSeekOnboardingDialog.js
+ 		/**
+ 		* Official-DeepSeek first-run step. Readiness comes from the same
+ 		* provider/settings/credential join as the Models page: any provider the user
+-		* can already talk to ends the step, and only a user with none is offered the
+-		* official DeepSeek route. The step reuses that page's credential editor in
+-		* the onboarding plugin's shared modal, so the key is entered once.
++		* can already talk to ends the step. Otherwise, guide them to Settings → Models.
+ 		*/
+ 		/* v8 ignore next 3 -- closed-union defaults only defend future source widening */
  		function assertNever$1(_value) {
  			throw new Error("unexpected DeepSeek onboarding state");
  		}
@@ -683,16 +709,15 @@ index aa8ef80..7071da4 100644
  		/**
 -		* Prompt a first-run user for the official DeepSeek credential while no
 -		* provider can serve requests and that credential is writable.
-+		* Prompt a first-run user to choose a supported mainstream provider and store
-+		* its credential while no configured route can serve requests.
++		* Prompt a first-run user to choose and configure a provider in Settings.
  		* @param props - settings-shell owner state and Models feature dependencies.
  		* @returns the onboarding modal or null when onboarding needs no intervention.
  		*/
  		function DeepSeekOnboardingDialog(props) {
- 			const { complete, controller, useModels, operations, schema, t } = props;
+-			const { complete, controller, useModels, operations, schema, t } = props;
++			const { complete, openSection, controller, useModels, t } = props;
  			const state = useModels((snapshot) => snapshot);
 -			const readiness = onboardingReadiness(state);
-+			const [selectedProvider, setSelectedProvider] = (0, react.useState)("deepseek-official");
 +			const choices = ONBOARDING_PROVIDERS.flatMap((choice) => {
 +				const row = state.rows.find((candidate) => candidate.entry.provider === choice.provider && candidate.entry.settingsNs !== "");
 +				return row === void 0 || state.namespaces.get(row.entry.settingsNs) === void 0 ? [] : [{
@@ -700,7 +725,6 @@ index aa8ef80..7071da4 100644
 +					row
 +				}];
 +			});
-+			const selected = choices.find((choice) => choice.provider === selectedProvider) ?? choices[0];
 +			const anyUsable = state.rows.some(providerUsable);
  			(0, react.useEffect)(() => {
  				if (state.status === "idle") controller.load();
@@ -721,16 +745,59 @@ index aa8ef80..7071da4 100644
 -			const namespace = state.namespaces.get("llm-deepseek");
 -			/* v8 ignore next 2 -- credential-missing is derived only from this exact joined row. */
 -			if (row === void 0 || namespace === void 0) return null;
+-			const finishCredential = (changed) => {
+-				if (!changed) {
+-					complete();
+-					return;
+-				}
+-				controller.load();
+-			};
 +				if (anyUsable || state.status === "error" || state.status === "ready" && (!state.writable || choices.length === 0)) complete();
 +			}, [anyUsable, choices.length, complete, state.status, state.writable]);
-+			if (state.status === "idle" || state.status === "loading" || anyUsable || selected === void 0 || !state.writable) return null;
-+			const row = selected.row;
-+			const namespace = state.namespaces.get(row.entry.settingsNs);
-+			if (namespace === void 0) return null;
- 			const finishCredential = (changed) => {
- 				if (!changed) {
- 					complete();
-@@ -2660,6 +2996,8 @@ window.__ModuleLoader__.load({
++			if (state.status === "idle" || state.status === "loading" || anyUsable || choices.length === 0 || !state.writable) return null;
+ 			return (0, react_jsx_runtime.jsxs)(OnboardingModal, {
+ 				title: t("onboardingTitle"),
++				focusTitle: true,
+ 				children: [(0, react_jsx_runtime.jsx)("p", {
+ 					className: DeepSeekOnboardingDialog_module_css_default.description,
+ 					children: t("onboardingDescription")
+ 				}), (0, react_jsx_runtime.jsx)("div", {
+-					className: DeepSeekOnboardingDialog_module_css_default.editor,
+-					children: (0, react_jsx_runtime.jsx)(ProviderEditor, {
+-						provider: row.entry.provider,
+-						displayName: row.entry.displayName,
+-						namespace,
+-						schema,
+-						settingsPath: row.entry.settingsPath,
+-						operations,
+-						t,
+-						readOnly: false,
+-						hideTitle: true,
+-						credentialOnly: true,
+-						credentialRequired: true,
+-						autoFocusCredential: true,
+-						cancelLabelKey: "onboardingLater",
+-						submitLabelKey: "onboardingSave",
+-						submitBusyLabelKey: "onboardingSaving",
+-						onClose: finishCredential
+-					})
++					className: DeepSeekOnboardingDialog_module_css_default.actions,
++					children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
++						variant: "outline",
++						onClick: complete,
++						children: t("onboardingLater")
++					}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
++						variant: "primary",
++						onClick: () => {
++							complete();
++							openSection("models");
++						},
++						children: t("onboardingOpenSettings")
++					})]
+ 				})]
+ 			});
+ 		}
+@@ -2660,6 +2976,8 @@ window.__ModuleLoader__.load({
  			deleting: "Deleting {provider}…",
  			add: "Add provider",
  			provider: "Provider",
@@ -739,7 +806,7 @@ index aa8ef80..7071da4 100644
  			close: "Close",
  			cancel: "Cancel",
  			apply: "Apply",
-@@ -2691,7 +3029,15 @@ window.__ModuleLoader__.load({
+@@ -2691,7 +3009,15 @@ window.__ModuleLoader__.load({
  			contextWindowPlaceholder: "Uses the provider default",
  			maxTokens: "Max output tokens",
  			maxTokensPlaceholder: "Uses the provider default",
@@ -756,20 +823,21 @@ index aa8ef80..7071da4 100644
  			addModel: "Add model",
  			removeModel: "Delete model",
  			modelsEmpty: "No models will be shown in the selector. Unlisted IDs can still be sent directly.",
-@@ -2736,14 +3082,18 @@ window.__ModuleLoader__.load({
+@@ -2736,14 +3062,19 @@ window.__ModuleLoader__.load({
  			settingsPathUnresolvable: "unresolvable settings path",
  			create: "Create provider",
  			creating: "Creating…",
 -			welcomeTitle: "Internal Testing Notice",
 -			welcomeBody: "DeepSeek Harness 0.1 remains in testing for Harness developers. Many areas need further improvement, and we welcome feedback from the developer community. DeepSeek Harness's core plugins and foundational APIs will continue to evolve rapidly over the coming months.\n\nWe look forward to exploring the limits of intelligence with developers around the world, building on open-source, open, reusable, and composable infrastructure. We welcome Harness developers everywhere to join the DSH plugin ecosystem.",
-+			welcomeTitle: "About Atelier Desktop",
-+			welcomeBody: "Atelier Desktop is an early preview for art and 3D creation. Configure a model, Skills, MCP tools, and Blender as your task requires. Check rendered previews and source files before relying on generated work.\n\nAtelier Desktop builds on the open-source DSH Desktop and DeepSeek Harness projects. Their components are maintained by their respective teams; the Atelier creative preset and product experience are developed independently.",
++			welcomeTitle: "About Atelier",
++			welcomeBody: "Atelier is an early preview for art and 3D creation. Configure a model, Skills, and MCP tools as your task requires. Desktop users can also connect Blender locally. Check rendered previews and source files before relying on generated work.\n\nAtelier builds on the open-source DSH Desktop and DeepSeek Harness projects. Their components are maintained by their respective teams; the Atelier creative preset and product experience are developed independently.",
  			welcomeContinue: "Continue",
  			welcomeError: "The acknowledgement could not be saved. Please try again.",
 -			onboardingTitle: "Add an API key to get started",
 -			onboardingDescription: "Configure the official DeepSeek provider to start building.",
-+			onboardingTitle: "Connect a model provider",
-+			onboardingDescription: "Choose a provider and enter its API key. Atelier will enable that provider's built-in model catalog automatically.",
++			onboardingTitle: "Choose a model in Settings",
++			onboardingDescription: "Before running a task, open Settings → Models, choose a provider such as DeepSeek, and enter its API key. You can explore Atelier before setting this up.",
++			onboardingOpenSettings: "Open model settings",
 +			onboardingProvider: "Model provider",
 +			onboardingManufacturer: "Model developer",
 +			onboardingAggregator: "Model aggregation platform",
@@ -780,7 +848,7 @@ index aa8ef80..7071da4 100644
  			onboardingSaving: "Saving…",
  			keyRequired: "Enter an API key to continue."
  		};
-@@ -2763,6 +3113,8 @@ window.__ModuleLoader__.load({
+@@ -2763,6 +3094,8 @@ window.__ModuleLoader__.load({
  			deleting: "正在删除 {provider}…",
  			add: "添加提供方",
  			provider: "提供方",
@@ -789,7 +857,7 @@ index aa8ef80..7071da4 100644
  			close: "关闭",
  			cancel: "取消",
  			apply: "保存",
-@@ -2794,7 +3146,15 @@ window.__ModuleLoader__.load({
+@@ -2794,7 +3127,15 @@ window.__ModuleLoader__.load({
  			contextWindowPlaceholder: "使用提供方默认值",
  			maxTokens: "最大输出 token 数",
  			maxTokensPlaceholder: "使用提供方默认值",
@@ -806,20 +874,21 @@ index aa8ef80..7071da4 100644
  			addModel: "添加模型",
  			removeModel: "删除模型",
  			modelsEmpty: "模型选择器中将不显示任何模型；目录外 ID 仍可直接发送。",
-@@ -2839,14 +3199,18 @@ window.__ModuleLoader__.load({
+@@ -2839,14 +3180,19 @@ window.__ModuleLoader__.load({
  			settingsPathUnresolvable: "无法解析设置路径",
  			create: "创建提供方",
  			creating: "创建中…",
 -			welcomeTitle: "内测声明",
 -			welcomeBody: "DeepSeek Harness 目前的 0.1 版本仍处在面向 Harness 开发者进行测试的阶段，还有许多地方需要持续改进和打磨，希望听取广大开发者的反馈建议。预计 DeepSeek Harness 的核心插件以及基础 API 都会在接下来的一段时间内快速迭代、持续演化。\n\n我们期待与全球开发者一起，在开源、开放、可复用、可组合的基础设施之上，共同探索智能上限。欢迎全球 Harness 开发者加入 DSH 插件生态。",
 +			welcomeTitle: "Atelier 试用说明",
-+			welcomeBody: "Atelier Desktop 目前处于早期试用阶段，主要面向艺术创作与 3D 工作流。请按任务需要配置模型、Skills、MCP 工具和 Blender；使用生成结果前，请核对渲染预览与源文件。\n\nAtelier Desktop 基于开源的 DSH Desktop 和 DeepSeek Harness 构建。相关组件由各自项目维护；Atelier 的创作预设与产品体验独立开发。",
++			welcomeBody: "Atelier 目前处于早期试用阶段，主要面向艺术创作与 3D 工作流。请按任务需要配置模型、Skills 和 MCP 工具；桌面端还可连接本机 Blender。使用生成结果前，请核对渲染预览与源文件。\n\nAtelier 基于开源的 DSH Desktop 和 DeepSeek Harness 构建。相关组件由各自项目维护；Atelier 的创作预设与产品体验独立开发。",
  			welcomeContinue: "继续",
  			welcomeError: "暂时无法保存确认状态，请重试。",
 -			onboardingTitle: "添加一个 API Key 开始使用",
 -			onboardingDescription: "配置 DeepSeek 官方模型，即可开始使用。",
-+			onboardingTitle: "接入模型提供方",
-+			onboardingDescription: "选择提供方并填写 API Key，Atelier 会自动启用该提供方的内置模型目录。之后可在「设置 → 模型」中添加更多提供方。",
++			onboardingTitle: "去设置中选择模型",
++			onboardingDescription: "执行任务前，请前往「设置 → 模型」选择 DeepSeek 等模型提供方，并填写对应的 API 密钥。暂不配置也可以先浏览 Atelier。",
++			onboardingOpenSettings: "打开模型设置",
 +			onboardingProvider: "选择模型提供方",
 +			onboardingManufacturer: "模型厂商",
 +			onboardingAggregator: "模型聚合平台",

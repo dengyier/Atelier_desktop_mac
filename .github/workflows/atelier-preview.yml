@@ -42,7 +42,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run typecheck
-      - name: Build unsigned Apple Silicon preview
+      - name: Build ad-hoc-signed Apple Silicon preview
         env:
           VERSION: ${{ inputs.version }}
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
@@ -55,6 +55,16 @@ jobs:
           test -d 'dist-dev/mac-arm64/Atelier Desktop Dev.app'
           test -s dist-dev/atelier-desktop-dev-mac-arm64.dmg
           test -s dist-dev/atelier-desktop-dev-mac-arm64.zip
+          app_modules='dist-dev/mac-arm64/Atelier Desktop Dev.app/Contents/Resources/app/node_modules'
+          grep -F 'openSection("models")' "$app_modules/@deepseek-ai/dsh-client-ui-settings-models/lib/client.js" >/dev/null
+          grep -F "onboardingTitle: 'Choisir un modèle dans les paramètres'" "$app_modules/dsh-desktop-client-ui/client.js" >/dev/null
+          codesign --verify --deep --strict --verbose=2 'dist-dev/mac-arm64/Atelier Desktop Dev.app'
+          hdiutil verify dist-dev/atelier-desktop-dev-mac-arm64.dmg
+          mount_dir="$(mktemp -d)"
+          hdiutil attach dist-dev/atelier-desktop-dev-mac-arm64.dmg -nobrowse -readonly -mountpoint "$mount_dir"
+          codesign --verify --deep --strict --verbose=2 "$mount_dir/Atelier Desktop Dev.app"
+          hdiutil detach "$mount_dir"
+          rmdir "$mount_dir"
           unzip -Z1 dist-dev/atelier-desktop-dev-mac-arm64.zip | grep -F 'Atelier Desktop Dev.app/Contents/Info.plist' >/dev/null
           cd dist-dev
           shasum -a 256 atelier-desktop-dev-mac-arm64.dmg atelier-desktop-dev-mac-arm64.zip > SHA256SUMS
@@ -70,7 +80,7 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "Atelier Desktop $VERSION (macOS Apple Silicon preview)" \
             --prerelease \
-            --notes "Unsigned macOS Apple Silicon preview of Atelier Desktop. This is not a notarized production installer and does not support automatic updates. Install only if you trust this repository and verify SHA256SUMS. Blender and its MCP add-on are separate prerequisites for 3D tasks. Source commit: $GITHUB_SHA." \
+            --notes "Ad-hoc-signed macOS Apple Silicon preview of Atelier Desktop. This is not Apple Developer ID signed or notarized and does not support automatic updates. macOS may require approval in Privacy & Security. Install only if you trust this repository and verify SHA256SUMS. Blender and its MCP add-on are separate prerequisites for 3D tasks. Source commit: $GITHUB_SHA." \
             dist-dev/atelier-desktop-dev-mac-arm64.dmg \
             dist-dev/atelier-desktop-dev-mac-arm64.zip \
             dist-dev/SHA256SUMS

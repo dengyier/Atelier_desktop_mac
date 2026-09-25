@@ -1,7 +1,8 @@
 diff --git a/node_modules/@deepseek-ai/dsh-client-ui-layout/lib/client.js b/node_modules/@deepseek-ai/dsh-client-ui-layout/lib/client.js
+index 282f8e7..db5f4f9 100644
 --- a/node_modules/@deepseek-ai/dsh-client-ui-layout/lib/client.js
 +++ b/node_modules/@deepseek-ai/dsh-client-ui-layout/lib/client.js
-@@ -11,6 +11,7 @@
+@@ -11,6 +11,7 @@ window.__ModuleLoader__.load({
  		* LG breakpoint); a manual toggle below it re-expands over the squeezed center
  		* (stores.ts narrowExpanded). */
  		const SIDEBAR_AUTO_COLLAPSE = 1024;
@@ -9,7 +10,7 @@ diff --git a/node_modules/@deepseek-ai/dsh-client-ui-layout/lib/client.js b/node
  		/** Maximum normal right panel width as a fraction of the frame. */
  		const RIGHTBAR_MAX_RATIO = .7;
  		/** First-open right panel preference as a fraction of the frame. */
-@@ -34,7 +35,7 @@
+@@ -34,7 +35,7 @@ window.__ModuleLoader__.load({
  		*   without that track may the center fall below its minimum, down to zero.
  		*/
  		function computeColumns(viewport, sidebar, rightbar) {
@@ -18,3 +19,12 @@ diff --git a/node_modules/@deepseek-ai/dsh-client-ui-layout/lib/client.js b/node
  			const available = viewport - s - 400;
  			const r = rightbar === 0 || available < 300 ? 0 : Math.min(available, clampWidth(rightbar, 300, viewport * RIGHTBAR_MAX_RATIO));
  			return {
+@@ -260,7 +261,7 @@ window.__ModuleLoader__.load({
+ 			const onRightbarDrag = (0, react.useCallback)((dx) => {
+ 				actions.setRightbar(rightbarBase.current - dx);
+ 			}, [actions]);
+-			const productTitle = "DeepSeek Harness";
++			const productTitle = "Atelier";
+ 			const sidebar = (0, react.useMemo)(() => renderSlot("sidebar", {
+ 				collapsed: sidebarCollapsed,
+ 				width: cols.sidebar

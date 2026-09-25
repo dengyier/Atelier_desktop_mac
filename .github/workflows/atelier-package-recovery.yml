@@ -1,0 +1,57 @@
+name: Recover Atelier preview package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Existing Atelier preview release version (for example 0.1.0-preview.1)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish-package:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate version and download published assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-preview\.[0-9]+$ ]]; then
+            echo '::error::Use a version such as 0.1.0-preview.1'
+            exit 1
+          fi
+          release_valid="$(gh release view "atelier-v$VERSION" --repo "$GITHUB_REPOSITORY" --json isPrerelease,assets \
+            --jq 'select(.isPrerelease == true and ([.assets[].name] | sort) == (["SHA256SUMS", "atelier-desktop-dev-mac-arm64.dmg", "atelier-desktop-dev-mac-arm64.zip"] | sort)) | .isPrerelease')"
+          test "$release_valid" = true
+          mkdir -p release-assets
+          gh release download "atelier-v$VERSION" --repo "$GITHUB_REPOSITORY" --dir release-assets
+          cd release-assets
+          sha256sum -c SHA256SUMS
+      - uses: oras-project/setup-oras@v2
+        with:
+          url: https://github.com/oras-project/oras/releases/download/v1.3.4/oras_1.3.4_linux_amd64.tar.gz
+          checksum: f27adb935022d94df8dc77719c322dda592c78a0d57a6f7dcdd8d900b248c454
+      - name: Publish GitHub Packages artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GH_TOKEN" | oras login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          repo_lower="$(printf '%s' "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          cd release-assets
+          oras push \
+            --artifact-type application/vnd.atelier.desktop.preview.v1 \
+            --annotation "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --annotation "org.opencontainers.image.version=$VERSION" \
+            "ghcr.io/$repo_lower:$VERSION" \
+            atelier-desktop-dev-mac-arm64.dmg:application/x-apple-diskimage \
+            atelier-desktop-dev-mac-arm64.zip:application/zip \
+            SHA256SUMS:text/plain
+          oras manifest fetch "ghcr.io/$repo_lower:$VERSION" >/dev/null

@@ -74,9 +74,10 @@ jobs:
             dist-dev/atelier-desktop-dev-mac-arm64.dmg \
             dist-dev/atelier-desktop-dev-mac-arm64.zip \
             dist-dev/SHA256SUMS
-      - uses: oras-project/setup-oras@v1
+      - uses: oras-project/setup-oras@v2
         with:
-          version: 1.3.4
+          url: https://github.com/oras-project/oras/releases/download/v1.3.4/oras_1.3.4_darwin_arm64.tar.gz
+          checksum: 217761a9500242ff473de8656b5aca21136ff39e17e9e61fd8936bbfd902704c
       - name: Publish the same preview files to GitHub Packages
         env:
           GH_TOKEN: ${{ github.token }}

@@ -1,0 +1,27 @@
+[Unit]
+Description=Atelier multiuser web preview gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=atelierweb
+Group=atelierweb
+WorkingDirectory=/home/atelier_web/app
+EnvironmentFile=/etc/atelier-web-cloud.env
+Environment=HOME=/home/atelier_web
+Environment=PATH=/opt/atelier-node/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/opt/atelier-node/bin/node /home/atelier_web/app/scripts/web-cloud/gateway.mjs
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=read-only
+MemoryMax=512M
+TasksMax=128
+
+[Install]
+WantedBy=multi-user.target

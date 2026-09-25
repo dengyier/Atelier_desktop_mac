@@ -24,4 +24,19 @@ Each user ID is hashed into a Docker container and named-volume identifier. The 
 - The current Atelier email-login rate limit also counts failed attempts by caller IP. A server-to-server gateway makes those attempts originate from one gateway address. Resolve trusted client-IP forwarding and abuse controls before public launch.
 - The current production dependency graph pulls `image-size@1.2.1` through `pptxgenjs`; npm reports high-severity image parser denial-of-service advisories, and the compatible `image-size` 1.x line has no patched release. Do not accept untrusted image uploads on a public launch until the PPT dependency path is updated and retested.
 - Verify WebSocket streaming, file upload/download, long-running task interruption, logout and auth revocation, model-key persistence, two-user isolation, backup and recovery, and resource exhaustion against the actual release image. Local unit tests and a runner startup smoke do not establish that acceptance.
-- The former `deploy/atelier-web.service` and `deploy/atelier-web.nginx.conf` describe the rolled-back private single-user preview. Do not use them to publish this gateway.
+- The former `deploy/atelier-web.service` and `deploy/atelier-web.nginx.conf` describe the rolled-back single-user preview. Use `deploy/atelier-web-cloud.service` and `deploy/atelier-web-cloud.nginx.conf` for a protected multiuser preview only. The latter retains HTTP Basic authentication until the public-launch issues above are resolved.
+
+## Protected server preview
+
+Install the runner image on the server, then run the gateway as an unprivileged `atelierweb` user with access to **its own rootless Docker daemon**. Do not grant the gateway account membership in the host's rootful `docker` group. Use a dedicated data directory at `/home/atelier_web`; the runner volumes are owned by the rootless daemon. The service template expects Node at `/opt/atelier-node/bin/node` and its environment at `/etc/atelier-web-cloud.env` (mode `0600`). Example non-secret values:
+
+```text
+ATELIER_AUTH_BASE_URL=https://atelier.artsmart.space
+ATELIER_WEB_ORIGIN=https://at.artsmart.space
+ATELIER_WEB_IMAGE=atelier-web-runner:<deployed-commit>
+ATELIER_WEB_MAX_ACTIVE=4
+ATELIER_WEB_PORT=18081
+DOCKER_HOST=unix:///run/user/<atelierweb-uid>/docker.sock
+```
+
+Install the supplied `at.artsmart.space` certificate and matching private key as `/etc/nginx/ssl/at.artsmart.space/fullchain.pem` and `privkey.pem` (private key mode `0600`, root owned). Ensure the Basic Auth password file exists and is not committed. Enable the new service, replace the old preview's Nginx site only after `nginx -t` succeeds, then verify the HTTPS certificate, login, user isolation, model setup, WebSocket traffic, and file transfer from a browser. A rollback restores the old Nginx site or disables this subdomain and stops only `atelier-web-cloud.service`; preserve named tenant volumes. Do not reset user data during rollout or rollback.

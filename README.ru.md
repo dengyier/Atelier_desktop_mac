@@ -2,7 +2,7 @@
 
 **Искусство и ИИ в одном локальном рабочем пространстве.** Atelier Desktop — предварительная версия для macOS. Она помогает пройти путь от художественной идеи и исследования до редактируемых файлов и проверяемых визуальных результатов. Основа проекта — [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) и [DSH Desktop](https://github.com/dataelement/dsh-desktop) под лицензией MIT. У Atelier собственные оформление, интерфейс, творческий пресет и отдельный профиль пользователя.
 
-[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
+[English](README.md) · [简体中文](README.zh.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
 
 ## Что входит в предварительную версию
 

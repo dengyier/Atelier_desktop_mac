@@ -2,7 +2,7 @@
 
 **アートと AI を、ひとつのローカルワークスペースに。** Atelier Desktop は macOS 向けのローカルプレビューです。制作テーマから資料調査、編集可能な制作ファイル、確認できるビジュアル成果までをつなぎます。[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) と MIT ライセンスの [DSH Desktop](https://github.com/dataelement/dsh-desktop) を基盤とし、Atelier 独自のブランド、画面、制作プリセット、ユーザープロファイルを備えます。
 
-[English](README.md) · [简体中文](README.zh.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
+[English](README.md) · [简体中文](README.zh.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Español](README.es.md) · [Português](README.pt.md)
 
 ## このプレビューでできること
 

@@ -2,7 +2,13 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { createRequire } from 'node:module'
+import { entryListSchema } from '@deepseek-ai/cordis-plugin-include'
 import { ensureAtelierPreset } from '../src/main/state/atelier-preset'
+
+const yaml = createRequire(import.meta.url)('js-yaml') as {
+  load(source: string, options: { schema: typeof entryListSchema }): unknown
+}
 
 const roots: string[] = []
 afterEach(async () => {
@@ -12,7 +18,8 @@ afterEach(async () => {
 describe('Atelier preset installation', () => {
   it('disables the optional Blender connector when uvx is missing or fails', async () => {
     const source = await readFile(join(import.meta.dirname, '../build/atelier-preset/agent.cordis.yml'), 'utf8')
-    const expression = source.match(/disabled: !!js (process\.getBuiltinModule\('node:child_process'\)[^\n]+)/)?.[1]
+    const rows = yaml.load(source, { schema: entryListSchema }) as { id: string; disabled?: { __jsExpr: string } }[]
+    const expression = rows.find((row) => row.id === 'mcp-blender')?.disabled?.__jsExpr
     expect(expression).toBeDefined()
     const evaluate = new Function('process', `return ${expression}`)
     for (const status of [null, 1, 0]) {

@@ -388,7 +388,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - name: Set app version from release tag
         if: startsWith(github.ref, 'refs/tags/v')
@@ -419,18 +419,35 @@ jobs:
       - name: Build isolated Windows development package
         if: ${{ !startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'workflow_dispatch' || inputs.mode == 'development') }}
         run: npm run package:dev:win
+      - name: Install and verify Windows development installer
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') && (github.event_name != 'workflow_dispatch' || inputs.mode == 'development') }}
+        shell: pwsh
+        run: |
+          $installer = Get-Item 'dist-dev/atelier-desktop-dev-windows-x64-setup.exe'
+          if ($installer.Length -lt 50MB) { throw 'Windows installer is unexpectedly small.' }
+          $installedDir = Join-Path $env:RUNNER_TEMP ('Atelier installed smoke ' + [guid]::NewGuid().ToString())
+          $setup = Start-Process -FilePath $installer.FullName -ArgumentList "/S /D=$installedDir" -PassThru
+          if (-not $setup.WaitForExit(120000)) { Stop-Process -Id $setup.Id -Force; throw 'Windows installer timed out.' }
+          if ($setup.ExitCode -ne 0) { throw "Windows installer failed: $($setup.ExitCode)" }
+          $installedExe = Join-Path $installedDir 'Atelier Desktop Dev.exe'
+          if (-not (Test-Path $installedExe)) { throw 'Installed Atelier executable is missing.' }
+          "SMOKE_INSTALLED_EXE=$installedExe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $checksum = Get-FileHash -Algorithm SHA256 $installer.FullName
+          "$($checksum.Hash.ToLower())  $($installer.Name)" | Set-Content 'dist-dev/SHA256SUMS' -Encoding ascii
+          Write-Host 'Windows NSIS installation passed.'
       - name: Smoke test packaged Windows Harness
         if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         shell: pwsh
         env:
-          SMOKE_EXE: ${{ (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'signed' || inputs.mode == 'prerelease'))) && 'dist\win-unpacked\DSH Desktop.exe' || 'dist-dev\win-unpacked\DSH Desktop Dev.exe' }}
-          SMOKE_USERDATA: ${{ (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'signed' || inputs.mode == 'prerelease'))) && 'dsh-desktop' || 'dsh-desktop-dev' }}
+          SMOKE_EXE: ${{ (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'signed' || inputs.mode == 'prerelease'))) && 'dist\win-unpacked\Atelier Desktop.exe' || 'dist-dev\win-unpacked\Atelier Desktop Dev.exe' }}
+          SMOKE_USERDATA: ${{ (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && (inputs.mode == 'signed' || inputs.mode == 'prerelease'))) && 'atelier-desktop' || 'atelier-desktop-dev' }}
         run: |
           $userData = Join-Path $env:APPDATA $env:SMOKE_USERDATA
           $logPath = Join-Path $userData 'logs\harness.log'
           # Run outside the checkout: otherwise Node can silently resolve a
           # missing packaged dependency from the repository's node_modules.
           $sourceExecutable = Get-Item $env:SMOKE_EXE
+          if ($env:SMOKE_INSTALLED_EXE) { $sourceExecutable = Get-Item $env:SMOKE_INSTALLED_EXE }
           $isolatedApp = Join-Path $env:RUNNER_TEMP ('DSH packaged smoke ' + [guid]::NewGuid().ToString())
           New-Item -ItemType Directory -Path $isolatedApp | Out-Null
           Copy-Item -Path (Join-Path $sourceExecutable.Directory.FullName '*') -Destination $isolatedApp -Recurse
@@ -546,9 +563,10 @@ jobs:
         with:
           name: windows-x64-dev
           path: |
-            dist-dev/dsh-desktop-dev-windows-x64-setup.exe
-            dist-dev/dsh-desktop-dev-windows-x64-setup.exe.blockmap
+            dist-dev/atelier-desktop-dev-windows-x64-setup.exe
+            dist-dev/atelier-desktop-dev-windows-x64-setup.exe.blockmap
             dist-dev/latest.yml
+            dist-dev/SHA256SUMS
           if-no-files-found: error
 
   sign-windows:

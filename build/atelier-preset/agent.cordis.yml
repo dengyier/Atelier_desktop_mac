@@ -94,6 +94,8 @@
 # Blender; tool calls report the missing connection until the add-on is running.
 - id: mcp-blender
   name: '@deepseek-ai/dsh-mcp-client'
+  # Optional dependency: a fresh installation must work without uv installed.
+  disabled: !!js process.getBuiltinModule('node:child_process').spawnSync('uvx', ['--version'], { timeout: 3000, windowsHide: true }).status !== 0
   config:
     serverName: blender
     transport: stdio

@@ -10,6 +10,22 @@ afterEach(async () => {
 })
 
 describe('Atelier preset installation', () => {
+  it('disables the optional Blender connector when uvx is missing or fails', async () => {
+    const source = await readFile(join(import.meta.dirname, '../build/atelier-preset/agent.cordis.yml'), 'utf8')
+    const expression = source.match(/disabled: !!js (process\.getBuiltinModule\('node:child_process'\)[^\n]+)/)?.[1]
+    expect(expression).toBeDefined()
+    const evaluate = new Function('process', `return ${expression}`)
+    for (const status of [null, 1, 0]) {
+      const process = { getBuiltinModule: () => ({ spawnSync: (command: string, args: string[], options: object) => {
+        expect(command).toBe('uvx')
+        expect(args).toEqual(['--version'])
+        expect(options).toEqual({ timeout: 3000, windowsHide: true })
+        return { status }
+      } }) }
+      expect(evaluate(process)).toBe(status !== 0)
+    }
+  })
+
   it('installs the bundled composition and skill once without overwriting user edits', async () => {
     const root = await mkdtemp(join(tmpdir(), 'atelier-preset-test-'))
     roots.push(root)

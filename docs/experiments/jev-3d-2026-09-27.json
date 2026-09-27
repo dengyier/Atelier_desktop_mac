@@ -1,0 +1,1573 @@
+{
+  "createdAt": "2026-09-27T02:56:08.839064+00:00",
+  "scope": "Local full 3D experiment; production unchanged",
+  "environment": {
+    "harness": "0.1.5-rc.2",
+    "blender": "5.2.2 LTS",
+    "mcp": "mcp-for-blender==2.0.4",
+    "safeMode": true,
+    "mainModel": "deepseek-official/deepseek-flash, provider alias",
+    "jev": "jev-1.13.0",
+    "perRunProcessDeadlineSeconds": 240,
+    "correctionLimit": "One iteration requested, not code-enforced",
+    "candidateCountInSuccessfulJevRequests": 44,
+    "skillSha256": "f5c84f8607d355f478ae84f522c6e765bd5eb65eb586e6178cac22eb39f38f47"
+  },
+  "limitations": [
+    "One task per language and single runs, plus a disclosed French follow-up; no randomized or repeated estimate.",
+    "Main-model alias, caches, generated code and render settings vary. Observational, not causal speed or quality evidence.",
+    "Live catalog exposes 44 Skills, unlike earlier one-Skill classification fixtures.",
+    "Geometry uses world-space bounding dimensions/spacing; visual shape and framing reviewed separately. No user artistic acceptance or product browser download check.",
+    "Main-model usage categories are disjoint; reasoning is included in output. Jev usage is separate. No cost estimate.",
+    "Setup failures and an intentionally stopped follow-up without a fresh scene are excluded; no treatment result claimed.",
+    "First French C without a Jev request and timed-out French A are retained, not replaced."
+  ],
+  "rows": [
+    {
+      "case": "en-A",
+      "language": "en",
+      "arm": "A",
+      "durationSeconds": 182.345,
+      "assistantSteps": 22,
+      "toolCalls": 25,
+      "turnEnd": "completed",
+      "exitCode": 0,
+      "ruleNotices": 0,
+      "jevNotices": 0,
+      "loadedSkills": [],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 15592,
+        "cacheReadTokens": 461696,
+        "cacheWriteTokens": 0,
+        "outputTokens": 22864,
+        "totalTokens": 500152
+      },
+      "jevDecisions": [],
+      "geometry": {
+        "blend": {
+          "meshCount": 9,
+          "ringNames": [
+            "Ring_01",
+            "Ring_02",
+            "Ring_03",
+            "Ring_04",
+            "Ring_05",
+            "Ring_06",
+            "Ring_07",
+            "Ring_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.2800000011920929,
+            0.5299999713897705,
+            0.7799999713897705,
+            1.0299999415874481,
+            1.2799999713897705,
+            1.5299999713897705,
+            1.7799999713897705,
+            2.0299999713897705
+          ],
+          "spacing": [
+            0.2499999701976776,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Plinth"
+          ],
+          "clearance": 0.019999995827674866,
+          "cameraCount": 2,
+          "hasMaterials": true,
+          "geometryPass": true
+        },
+        "glb": {
+          "meshCount": 9,
+          "ringNames": [
+            "Ring_01",
+            "Ring_02",
+            "Ring_03",
+            "Ring_04",
+            "Ring_05",
+            "Ring_06",
+            "Ring_07",
+            "Ring_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.2800000011920929,
+            0.5299999713897705,
+            0.7799999713897705,
+            1.0299999415874481,
+            1.2799999713897705,
+            1.5299999713897705,
+            1.7799999713897705,
+            2.0299999713897705
+          ],
+          "spacing": [
+            0.2499999701976776,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Plinth"
+          ],
+          "clearance": 0.019999995827674866,
+          "cameraCount": 0,
+          "hasMaterials": true,
+          "geometryPass": true
+        }
+      },
+      "artifacts": [
+        {
+          "file": "en-A/bronze_ring_stack.blend",
+          "bytes": 2543320,
+          "sha256": "a72220633229584c5a77f17b1a2a6e006e8ce843d2e146217d215af8a86ab3c6"
+        },
+        {
+          "file": "en-A/bronze_ring_stack.glb",
+          "bytes": 663724,
+          "sha256": "9606ed98ee6d9cc3dc36d6147650cf32547410da3dcd49662bd063bfa4b55761"
+        },
+        {
+          "file": "en-A/render_front_three_quarter_512.png",
+          "bytes": 302852,
+          "sha256": "d66408b7d83b698fa088a643fba348bb8ed07c4c1e3f990b08bf2a74af1d1463",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "en-A/render_side_512.png",
+          "bytes": 295931,
+          "sha256": "8546b8e66895f8c5ef05cb3546dc09fcfe3b52ce28235f2f5113d8ee285b3b6a",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": true
+      },
+      "notes": ""
+    },
+    {
+      "case": "en-B",
+      "language": "en",
+      "arm": "B",
+      "durationSeconds": 223.933,
+      "assistantSteps": 26,
+      "toolCalls": 31,
+      "turnEnd": "completed",
+      "exitCode": 0,
+      "ruleNotices": 0,
+      "jevNotices": 0,
+      "loadedSkills": [],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 17083,
+        "cacheReadTokens": 632192,
+        "cacheWriteTokens": 0,
+        "outputTokens": 29572,
+        "totalTokens": 678847
+      },
+      "jevDecisions": [],
+      "geometry": {
+        "blend": {
+          "meshCount": 10,
+          "ringNames": [
+            "Ring_01",
+            "Ring_02",
+            "Ring_03",
+            "Ring_04",
+            "Ring_05",
+            "Ring_06",
+            "Ring_07",
+            "Ring_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Plinth_Stone"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 2,
+          "hasMaterials": true,
+          "geometryPass": true
+        },
+        "glb": {
+          "meshCount": 9,
+          "ringNames": [
+            "Ring_01",
+            "Ring_02",
+            "Ring_03",
+            "Ring_04",
+            "Ring_05",
+            "Ring_06",
+            "Ring_07",
+            "Ring_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Plinth_Stone"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 0,
+          "hasMaterials": true,
+          "geometryPass": true
+        }
+      },
+      "artifacts": [
+        {
+          "file": "en-B/gallery_sculpture.blend",
+          "bytes": 2209748,
+          "sha256": "b642ba327c3c58da285d5800b973e557baecea07463d30902fa8789691d9244a"
+        },
+        {
+          "file": "en-B/gallery_sculpture.glb",
+          "bytes": 1849756,
+          "sha256": "1a6cd4a12d3aa00ddb42b8e1a83d4e249b51bbcbbec26baa58f671eb0c229e3f"
+        },
+        {
+          "file": "en-B/sculpture_front_three_quarter.png",
+          "bytes": 296011,
+          "sha256": "389681684beabd7f4f3bac63e84bd8296d40402f3efffaa6dcd1ee799be5b224",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "en-B/sculpture_side.png",
+          "bytes": 292696,
+          "sha256": "bfcf65025cce50c8515a8cc2d73386bb063de67986f2f0667e4a84f8d893445d",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": true
+      },
+      "notes": "Frozen rule rejects do not stop at a plan; no advice emitted."
+    },
+    {
+      "case": "en-C",
+      "language": "en",
+      "arm": "C",
+      "durationSeconds": 128.544,
+      "assistantSteps": 24,
+      "toolCalls": 28,
+      "turnEnd": "completed",
+      "exitCode": 0,
+      "ruleNotices": 0,
+      "jevNotices": 1,
+      "loadedSkills": [
+        "atelier-blender-workflow"
+      ],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 14127,
+        "cacheReadTokens": 395904,
+        "cacheWriteTokens": 0,
+        "outputTokens": 20251,
+        "totalTokens": 430282
+      },
+      "jevDecisions": [
+        {
+          "status": 200,
+          "elapsedMs": 833.6530000000002,
+          "model": "jev-1.13.0",
+          "answer": {
+            "type": "choice",
+            "choice": "s0",
+            "confidence": 0.99,
+            "probabilities": {
+              "s23": 0,
+              "s16": 0,
+              "s15": 0,
+              "s40": 0,
+              "s41": 0,
+              "s34": 0,
+              "s2": 0,
+              "s31": 0,
+              "s42": 0,
+              "s36": 0,
+              "s19": 0,
+              "s39": 0,
+              "s29": 0,
+              "s18": 0,
+              "s12": 0,
+              "s37": 0,
+              "none": 0,
+              "s4": 0,
+              "s10": 0,
+              "s14": 0,
+              "s17": 0,
+              "s24": 0,
+              "s20": 0,
+              "s28": 0,
+              "s27": 0,
+              "s1": 0,
+              "s21": 0,
+              "s26": 0,
+              "s9": 0,
+              "s7": 0,
+              "s32": 0,
+              "s33": 0,
+              "s35": 0,
+              "s30": 0,
+              "s38": 0,
+              "s3": 0,
+              "s25": 0,
+              "s8": 0,
+              "s6": 0,
+              "s43": 0,
+              "s5": 0,
+              "s11": 0,
+              "s22": 0,
+              "s13": 0,
+              "s0": 1
+            }
+          },
+          "usage": {
+            "input_tokens": 6126,
+            "output_tokens": 411
+          }
+        }
+      ],
+      "geometry": {
+        "blend": {
+          "meshCount": 10,
+          "ringNames": [
+            "Ring_01",
+            "Ring_02",
+            "Ring_03",
+            "Ring_04",
+            "Ring_05",
+            "Ring_06",
+            "Ring_07",
+            "Ring_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.2750000059604645,
+            0.5249999761581421,
+            0.7749999761581421,
+            1.0249999463558197,
+            1.274999976158142,
+            1.524999976158142,
+            1.774999976158142,
+            2.0250000953674316
+          ],
+          "spacing": [
+            0.2499999701976776,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25000011920928955
+          ],
+          "plinthNames": [
+            "Plinth_Stone"
+          ],
+          "clearance": 0.015000000596046448,
+          "cameraCount": 2,
+          "hasMaterials": true,
+          "geometryPass": true
+        },
+        "glb": {
+          "meshCount": 9,
+          "ringNames": [
+            "Ring_01",
+            "Ring_02",
+            "Ring_03",
+            "Ring_04",
+            "Ring_05",
+            "Ring_06",
+            "Ring_07",
+            "Ring_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.2750000059604645,
+            0.5249999761581421,
+            0.7749999761581421,
+            1.0249999463558197,
+            1.274999976158142,
+            1.524999976158142,
+            1.774999976158142,
+            2.0250000953674316
+          ],
+          "spacing": [
+            0.2499999701976776,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25000011920928955
+          ],
+          "plinthNames": [
+            "Plinth_Stone"
+          ],
+          "clearance": 0.015000000596046448,
+          "cameraCount": 0,
+          "hasMaterials": true,
+          "geometryPass": true
+        }
+      },
+      "artifacts": [
+        {
+          "file": "en-C/gallery_sculpture.blend",
+          "bytes": 2872833,
+          "sha256": "d317807ad646d1205426319a62c51c67b12924dad454846fe617dfa24c6814e4"
+        },
+        {
+          "file": "en-C/gallery_sculpture.glb",
+          "bytes": 765672,
+          "sha256": "a1fa34ebd72d0f4f784e7fc84c2a950fd71087b28ab28a920ac7c54a15e95825"
+        },
+        {
+          "file": "en-C/gallery_sculpture_render_A_front3q.png",
+          "bytes": 261044,
+          "sha256": "8b212b2d20caa3ba44ab8a583ae57a36cb00db26c3c0628659a486ff2497ce20",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "en-C/gallery_sculpture_render_B_side.png",
+          "bytes": 243561,
+          "sha256": "94234ae57fc52784ca09a858057d45de30aaf642ade735da99c4214c6caad97f",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": true
+      },
+      "notes": ""
+    },
+    {
+      "case": "fr-A",
+      "language": "fr",
+      "arm": "A",
+      "durationSeconds": 238.997,
+      "assistantSteps": 25,
+      "toolCalls": 32,
+      "turnEnd": "aborted",
+      "exitCode": 1,
+      "ruleNotices": 0,
+      "jevNotices": 0,
+      "loadedSkills": [],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 15609,
+        "cacheReadTokens": 724352,
+        "cacheWriteTokens": 0,
+        "outputTokens": 38440,
+        "totalTokens": 778401
+      },
+      "jevDecisions": [],
+      "geometry": null,
+      "artifacts": [
+        {
+          "file": "fr-A/render_three_quarter.png",
+          "bytes": 269568,
+          "sha256": "1074d50040ada0a251f9bfd26603ea637d7477895246863fc303b27ff70b0bf2",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "fr-A/render_side.png",
+          "bytes": 269214,
+          "sha256": "23163e9f8f9adab05809cd019ba5cbf093b799d186bc26c4e62418801c2a8f5f",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": true
+      },
+      "notes": "Reached 240-second process deadline. No blend or GLB. Cleanup exposed a disposed appExit lookup in the experiment driver, subsequently corrected."
+    },
+    {
+      "case": "fr-B",
+      "language": "fr",
+      "arm": "B",
+      "durationSeconds": 158.191,
+      "assistantSteps": 23,
+      "toolCalls": 24,
+      "turnEnd": "completed",
+      "exitCode": 0,
+      "ruleNotices": 1,
+      "jevNotices": 0,
+      "loadedSkills": [
+        "atelier-blender-workflow"
+      ],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 11102,
+        "cacheReadTokens": 583552,
+        "cacheWriteTokens": 0,
+        "outputTokens": 33078,
+        "totalTokens": 627732
+      },
+      "jevDecisions": [],
+      "geometry": {
+        "blend": {
+          "meshCount": 9,
+          "ringNames": [
+            "Anneau_Bronze_01",
+            "Anneau_Bronze_02",
+            "Anneau_Bronze_03",
+            "Anneau_Bronze_04",
+            "Anneau_Bronze_05",
+            "Anneau_Bronze_06",
+            "Anneau_Bronze_07",
+            "Anneau_Bronze_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Socle_Pierre"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 2,
+          "hasMaterials": true,
+          "geometryPass": true
+        },
+        "glb": {
+          "meshCount": 9,
+          "ringNames": [
+            "Anneau_Bronze_01",
+            "Anneau_Bronze_02",
+            "Anneau_Bronze_03",
+            "Anneau_Bronze_04",
+            "Anneau_Bronze_05",
+            "Anneau_Bronze_06",
+            "Anneau_Bronze_07",
+            "Anneau_Bronze_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Socle_Pierre"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 0,
+          "hasMaterials": true,
+          "geometryPass": true
+        }
+      },
+      "artifacts": [
+        {
+          "file": "fr-B/sculpture_anneaux_bronze.blend",
+          "bytes": 325348,
+          "sha256": "51a386b2c9a7832fdf2e263a44fcd81f077de519d157f611381cbeef3e839110"
+        },
+        {
+          "file": "fr-B/sculpture_anneaux_bronze.glb",
+          "bytes": 981164,
+          "sha256": "43d8804bc5ed66edd5f88425f2ec9109f53ec525b0b6d9370786ba9803afe6af"
+        },
+        {
+          "file": "fr-B/rendu_01_trois_quarts_avant.png",
+          "bytes": 291822,
+          "sha256": "b7a61c88caa0aeda24b69dd54fcf85d8483f49e82849f02cf147199e427634f7",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "fr-B/rendu_02_vue_laterale.png",
+          "bytes": 283715,
+          "sha256": "362f8ad7645c37f1fece55bb433bc644be09cc2d54dd2cc2268b4b05802875ab",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": true
+      },
+      "notes": ""
+    },
+    {
+      "case": "fr-C-first",
+      "language": "fr",
+      "arm": "C",
+      "durationSeconds": 141.556,
+      "assistantSteps": 24,
+      "toolCalls": 27,
+      "turnEnd": "completed",
+      "exitCode": 0,
+      "ruleNotices": 0,
+      "jevNotices": 0,
+      "loadedSkills": [],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 17056,
+        "cacheReadTokens": 595712,
+        "cacheWriteTokens": 0,
+        "outputTokens": 28554,
+        "totalTokens": 641322
+      },
+      "jevDecisions": [],
+      "geometry": {
+        "blend": {
+          "meshCount": 9,
+          "ringNames": [
+            "Anneau_Bronze_01",
+            "Anneau_Bronze_02",
+            "Anneau_Bronze_03",
+            "Anneau_Bronze_04",
+            "Anneau_Bronze_05",
+            "Anneau_Bronze_06",
+            "Anneau_Bronze_07",
+            "Anneau_Bronze_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Socle_Pierre"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 2,
+          "hasMaterials": true,
+          "geometryPass": true
+        },
+        "glb": {
+          "meshCount": 9,
+          "ringNames": [
+            "Anneau_Bronze_01",
+            "Anneau_Bronze_02",
+            "Anneau_Bronze_03",
+            "Anneau_Bronze_04",
+            "Anneau_Bronze_05",
+            "Anneau_Bronze_06",
+            "Anneau_Bronze_07",
+            "Anneau_Bronze_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Socle_Pierre"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 0,
+          "hasMaterials": true,
+          "geometryPass": true
+        }
+      },
+      "artifacts": [
+        {
+          "file": "fr-C-first/sculpture_anneaux_bronze.blend",
+          "bytes": 211974,
+          "sha256": "3b1132f1aaeecd205ac0fb250bfe672644992a1d1f020e0cfaf63eae37545561"
+        },
+        {
+          "file": "fr-C-first/sculpture_anneaux_bronze.glb",
+          "bytes": 663684,
+          "sha256": "9587161c08c8b0619030a6b3a12a1dc50a31c3283bca85855f863d3062d68ecf"
+        },
+        {
+          "file": "fr-C-first/rendu_trois_quarts_512.png",
+          "bytes": 254748,
+          "sha256": "1be6374c2f95a0205886a42121d0583fae364981e47692a2e2b674b50ab583b7",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "fr-C-first/rendu_lateral_512.png",
+          "bytes": 256778,
+          "sha256": "27ae2c9afe7aed686d799078c0937c380b7e3f338d8d068057295745149239fa",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": true
+      },
+      "notes": "No TypeSafe request, notice or Skill load. Cause not conclusively established; startup ordering is suspected. Not a valid Jev treatment."
+    },
+    {
+      "case": "fr-C-confirmed",
+      "language": "fr",
+      "arm": "C",
+      "durationSeconds": 124.002,
+      "assistantSteps": 25,
+      "toolCalls": 28,
+      "turnEnd": "completed",
+      "exitCode": 0,
+      "ruleNotices": 0,
+      "jevNotices": 1,
+      "loadedSkills": [
+        "atelier-blender-workflow"
+      ],
+      "mainModel": {
+        "provider": "deepseek-official",
+        "model": "deepseek-flash"
+      },
+      "mainModelUsage": {
+        "inputTokens": 21933,
+        "cacheReadTokens": 611840,
+        "cacheWriteTokens": 0,
+        "outputTokens": 24345,
+        "totalTokens": 658118
+      },
+      "jevDecisions": [
+        {
+          "status": 200,
+          "elapsedMs": 842.1064999999999,
+          "model": "jev-1.13.0",
+          "answer": {
+            "type": "choice",
+            "choice": "s0",
+            "confidence": 0.99,
+            "probabilities": {
+              "s33": 0,
+              "s4": 0,
+              "s37": 0,
+              "s26": 0,
+              "s27": 0,
+              "s17": 0,
+              "s0": 1,
+              "s39": 0,
+              "s16": 0,
+              "s28": 0,
+              "s34": 0,
+              "s19": 0,
+              "s3": 0,
+              "s6": 0,
+              "s1": 0,
+              "s24": 0,
+              "s20": 0,
+              "s36": 0,
+              "s2": 0,
+              "s10": 0,
+              "s29": 0,
+              "s40": 0,
+              "s23": 0,
+              "s32": 0,
+              "s43": 0,
+              "s41": 0,
+              "s8": 0,
+              "s11": 0,
+              "s18": 0,
+              "none": 0,
+              "s38": 0,
+              "s13": 0,
+              "s35": 0,
+              "s15": 0,
+              "s14": 0,
+              "s25": 0,
+              "s42": 0,
+              "s9": 0,
+              "s5": 0,
+              "s31": 0,
+              "s30": 0,
+              "s22": 0,
+              "s12": 0,
+              "s21": 0,
+              "s7": 0
+            }
+          },
+          "usage": {
+            "input_tokens": 6208,
+            "output_tokens": 411
+          }
+        }
+      ],
+      "geometry": {
+        "blend": {
+          "meshCount": 9,
+          "ringNames": [
+            "Anneau_01",
+            "Anneau_02",
+            "Anneau_03",
+            "Anneau_04",
+            "Anneau_05",
+            "Anneau_06",
+            "Anneau_07",
+            "Anneau_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Socle_Pierre"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 2,
+          "hasMaterials": true,
+          "geometryPass": true
+        },
+        "glb": {
+          "meshCount": 9,
+          "ringNames": [
+            "Anneau_01",
+            "Anneau_02",
+            "Anneau_03",
+            "Anneau_04",
+            "Anneau_05",
+            "Anneau_06",
+            "Anneau_07",
+            "Anneau_08"
+          ],
+          "ringDimensions": [
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.12000000476837158
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.1199999451637268
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ],
+            [
+              1.2000000476837158,
+              1.2000000476837158,
+              0.11999988555908203
+            ]
+          ],
+          "ringZ": [
+            0.25999999046325684,
+            0.5099999904632568,
+            0.7599999904632568,
+            1.0099999606609344,
+            1.2599999904632568,
+            1.5099999904632568,
+            1.7599999904632568,
+            2.009999990463257
+          ],
+          "spacing": [
+            0.25,
+            0.25,
+            0.2499999701976776,
+            0.2500000298023224,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "plinthNames": [
+            "Socle_Pierre"
+          ],
+          "clearance": -1.4901161193847656e-08,
+          "cameraCount": 0,
+          "hasMaterials": true,
+          "geometryPass": true
+        }
+      },
+      "artifacts": [
+        {
+          "file": "fr-C-confirmed/sculpture_anneaux_bronze.blend",
+          "bytes": 216315,
+          "sha256": "6cccc90acafd8d04bbda04a53ffbb51e3d6a0fa65798706a191963a05d0695a8"
+        },
+        {
+          "file": "fr-C-confirmed/sculpture_anneaux_bronze.glb",
+          "bytes": 669304,
+          "sha256": "3c21f4284f3a6ccf1eb2f46d708d2013f65f9cea32f08637604aba8ab6089c0c"
+        },
+        {
+          "file": "fr-C-confirmed/rendu_trois_quarts_512.png",
+          "bytes": 279863,
+          "sha256": "3f96efcef7d22b006ddbe14f8c8552b661fe215e4cfbe5e00d97fc203882e32b",
+          "dimensions": [
+            512,
+            512
+          ]
+        },
+        {
+          "file": "fr-C-confirmed/rendu_lateral_512.png",
+          "bytes": 253677,
+          "sha256": "4f66e65943356e263891ca8498b849e2f656ee9fdd4cbdbdd445a054cac0c66f",
+          "dimensions": [
+            512,
+            512
+          ]
+        }
+      ],
+      "visualReview": {
+        "reviewed": true,
+        "eightRingsVisible": true,
+        "distinctViews": true,
+        "bronzeAndStoneVisible": true,
+        "fullFraming": false
+      },
+      "notes": "Supplemental run after explicit key/catalog preflight and experiment-owned Blender reset. Not substituted for the first C result. Front-three-quarter render slightly crops the front bottom corner of the plinth."
+    }
+  ]
+}

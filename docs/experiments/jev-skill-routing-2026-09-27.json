@@ -1,0 +1,647 @@
+{
+  "createdAt": "2026-09-27T02:08:55.143Z",
+  "model": "jev-1.13.0",
+  "mode": "live-recommendation-only",
+  "limitations": "24 synthetic tasks, one installed Skill. No main-model or complete Blender task comparison. Labels are developer judgments. No production capacity claim.",
+  "groups": [
+    {
+      "language": "en",
+      "split": "dev",
+      "count": 6,
+      "ruleCorrect": 6,
+      "jevCorrect": 6,
+      "fallback": 0
+    },
+    {
+      "language": "en",
+      "split": "holdout",
+      "count": 6,
+      "ruleCorrect": 4,
+      "jevCorrect": 6,
+      "fallback": 0
+    },
+    {
+      "language": "fr",
+      "split": "dev",
+      "count": 6,
+      "ruleCorrect": 6,
+      "jevCorrect": 6,
+      "fallback": 0
+    },
+    {
+      "language": "fr",
+      "split": "holdout",
+      "count": 6,
+      "ruleCorrect": 4,
+      "jevCorrect": 6,
+      "fallback": 0
+    }
+  ],
+  "latencyMs": {
+    "p50": 327.653792000001,
+    "p95": 939.2158340000005
+  },
+  "inputTokens": 10369,
+  "rows": [
+    {
+      "id": "case-1",
+      "language": "en",
+      "split": "dev",
+      "task": "Build an editable geometric sculpture in Blender and render two views.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.99,
+        "probabilities": {
+          "s0": 0.99,
+          "none": 0.01
+        },
+        "usage": {
+          "input_tokens": 429,
+          "output_tokens": 33
+        },
+        "elapsedMs": 847.6743749999999
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-2",
+      "language": "en",
+      "split": "dev",
+      "task": "Create a museum exhibition scene with sculptures and export a GLB.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.97,
+        "probabilities": {
+          "none": 0.01,
+          "s0": 0.99
+        },
+        "usage": {
+          "input_tokens": 430,
+          "output_tokens": 33
+        },
+        "elapsedMs": 306.705958
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-3",
+      "language": "en",
+      "split": "dev",
+      "task": "Model a hanging art installation with real dimensions and a blend file.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.99,
+        "probabilities": {
+          "none": 0.01,
+          "s0": 0.99
+        },
+        "usage": {
+          "input_tokens": 430,
+          "output_tokens": 33
+        },
+        "elapsedMs": 309.33850000000007
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-4",
+      "language": "en",
+      "split": "dev",
+      "task": "Find opening hours for the Louvre.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "none": 1,
+          "s0": 0
+        },
+        "usage": {
+          "input_tokens": 425,
+          "output_tokens": 32
+        },
+        "elapsedMs": 305.503416
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-5",
+      "language": "en",
+      "split": "dev",
+      "task": "Summarize these meeting notes.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "s0": 0,
+          "none": 1
+        },
+        "usage": {
+          "input_tokens": 424,
+          "output_tokens": 32
+        },
+        "elapsedMs": 633.7955419999998
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-6",
+      "language": "en",
+      "split": "dev",
+      "task": "Do not use Blender; write a short poem about sculpture.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "s0": 0,
+          "none": 1
+        },
+        "usage": {
+          "input_tokens": 429,
+          "output_tokens": 32
+        },
+        "elapsedMs": 466.4382919999998
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-7",
+      "language": "fr",
+      "split": "dev",
+      "task": "Crée une sculpture géométrique modifiable dans Blender et deux rendus.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.97,
+        "probabilities": {
+          "none": 0.01,
+          "s0": 0.99
+        },
+        "usage": {
+          "input_tokens": 437,
+          "output_tokens": 33
+        },
+        "elapsedMs": 329.4369579999998
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-8",
+      "language": "fr",
+      "split": "dev",
+      "task": "Construis une scène d’exposition avec des œuvres 3D et un fichier GLB.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.58,
+        "probabilities": {
+          "s0": 0.79,
+          "none": 0.21
+        },
+        "usage": {
+          "input_tokens": 440,
+          "output_tokens": 33
+        },
+        "elapsedMs": 309.07729199999994
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-9",
+      "language": "fr",
+      "split": "dev",
+      "task": "Modélise une installation artistique suspendue et livre le fichier blend.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.97,
+        "probabilities": {
+          "none": 0.01,
+          "s0": 0.99
+        },
+        "usage": {
+          "input_tokens": 432,
+          "output_tokens": 33
+        },
+        "elapsedMs": 583.3383750000003
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-10",
+      "language": "fr",
+      "split": "dev",
+      "task": "Trouve les horaires du musée d’Orsay.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "s0": 0,
+          "none": 1
+        },
+        "usage": {
+          "input_tokens": 428,
+          "output_tokens": 32
+        },
+        "elapsedMs": 302.6829169999992
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-11",
+      "language": "fr",
+      "split": "dev",
+      "task": "Résume les notes de cette réunion.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "none": 1,
+          "s0": 0
+        },
+        "usage": {
+          "input_tokens": 426,
+          "output_tokens": 32
+        },
+        "elapsedMs": 351.9763750000002
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-12",
+      "language": "fr",
+      "split": "dev",
+      "task": "N’utilise pas Blender ; écris un poème sur la sculpture.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "none": 1,
+          "s0": 0
+        },
+        "usage": {
+          "input_tokens": 434,
+          "output_tokens": 32
+        },
+        "elapsedMs": 316.2724160000007
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-13",
+      "language": "en",
+      "split": "holdout",
+      "task": "I need a three-dimensional pavilion for a gallery, editable with two camera renders.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": false,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.95,
+        "probabilities": {
+          "none": 0.02,
+          "s0": 0.98
+        },
+        "usage": {
+          "input_tokens": 435,
+          "output_tokens": 33
+        },
+        "elapsedMs": 307.6982080000007
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-14",
+      "language": "en",
+      "split": "holdout",
+      "task": "Produce a scale-accurate digital maquette of a kinetic artwork.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": false,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.94,
+        "probabilities": {
+          "none": 0.03,
+          "s0": 0.97
+        },
+        "usage": {
+          "input_tokens": 433,
+          "output_tokens": 33
+        },
+        "elapsedMs": 318.6451669999997
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-15",
+      "language": "en",
+      "split": "holdout",
+      "task": "Deliver a .blend containing an abstract bronze artwork and verified views.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.99,
+        "probabilities": {
+          "s0": 1,
+          "none": 0
+        },
+        "usage": {
+          "input_tokens": 431,
+          "output_tokens": 33
+        },
+        "elapsedMs": 337.78754200000003
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-16",
+      "language": "en",
+      "split": "holdout",
+      "task": "Translate this curatorial statement into French.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "s0": 0,
+          "none": 1
+        },
+        "usage": {
+          "input_tokens": 425,
+          "output_tokens": 32
+        },
+        "elapsedMs": 290.93366700000024
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-17",
+      "language": "en",
+      "split": "holdout",
+      "task": "Explain the difference between Cubism and Impressionism.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "none": 1,
+          "s0": 0
+        },
+        "usage": {
+          "input_tokens": 430,
+          "output_tokens": 32
+        },
+        "elapsedMs": 581.4365420000004
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-18",
+      "language": "en",
+      "split": "holdout",
+      "task": "Blender is mentioned in a book; I only want a plain-text bibliography.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "s0": 0,
+          "none": 1
+        },
+        "usage": {
+          "input_tokens": 433,
+          "output_tokens": 32
+        },
+        "elapsedMs": 293.6109999999999
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-19",
+      "language": "fr",
+      "split": "holdout",
+      "task": "Il me faut un pavillon tridimensionnel de galerie, modifiable, avec deux vues de caméra.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": false,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.94,
+        "probabilities": {
+          "none": 0.03,
+          "s0": 0.97
+        },
+        "usage": {
+          "input_tokens": 441,
+          "output_tokens": 33
+        },
+        "elapsedMs": 335.7517909999997
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-20",
+      "language": "fr",
+      "split": "holdout",
+      "task": "Réalise une maquette numérique à l’échelle d’une œuvre cinétique.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": false,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.92,
+        "probabilities": {
+          "none": 0.04,
+          "s0": 0.96
+        },
+        "usage": {
+          "input_tokens": 439,
+          "output_tokens": 33
+        },
+        "elapsedMs": 306.322459
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-21",
+      "language": "fr",
+      "split": "holdout",
+      "task": "Livre un .blend avec une œuvre abstraite en bronze et des vues vérifiées.",
+      "match": true,
+      "expected": "atelier-blender-workflow",
+      "ruleCorrect": true,
+      "result": {
+        "status": "recommended",
+        "skill": "atelier-blender-workflow",
+        "model": "jev-1.13.0",
+        "confidence": 0.97,
+        "probabilities": {
+          "s0": 0.98,
+          "none": 0.02
+        },
+        "usage": {
+          "input_tokens": 439,
+          "output_tokens": 33
+        },
+        "elapsedMs": 958.8444579999996
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-22",
+      "language": "fr",
+      "split": "holdout",
+      "task": "Traduis ce texte de commissariat en anglais.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "none": 1,
+          "s0": 0
+        },
+        "usage": {
+          "input_tokens": 428,
+          "output_tokens": 32
+        },
+        "elapsedMs": 596.7814999999991
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-23",
+      "language": "fr",
+      "split": "holdout",
+      "task": "Explique la différence entre le cubisme et l’impressionnisme.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 1,
+        "probabilities": {
+          "none": 1,
+          "s0": 0
+        },
+        "usage": {
+          "input_tokens": 434,
+          "output_tokens": 32
+        },
+        "elapsedMs": 327.653792000001
+      },
+      "jevCorrect": true
+    },
+    {
+      "id": "case-24",
+      "language": "fr",
+      "split": "holdout",
+      "task": "Blender apparaît dans un livre ; je veux seulement une bibliographie en texte brut.",
+      "match": false,
+      "expected": null,
+      "ruleCorrect": true,
+      "result": {
+        "status": "no-match",
+        "skill": null,
+        "model": "jev-1.13.0",
+        "confidence": 0.99,
+        "probabilities": {
+          "s0": 0.01,
+          "none": 0.99
+        },
+        "usage": {
+          "input_tokens": 437,
+          "output_tokens": 32
+        },
+        "elapsedMs": 939.2158340000005
+      },
+      "jevCorrect": true
+    }
+  ]
+}

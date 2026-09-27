@@ -3,8 +3,11 @@ import { connect } from 'node:net'
 import { spawn } from 'node:child_process'
 import { lstat, mkdir, symlink, writeFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
+import { enableCloudSettings } from './cloud-page.mjs'
+import { ensureDefaultLanguage } from './default-settings.mjs'
 
 await mkdir('/data/workspace', { recursive: true })
+await ensureDefaultLanguage('/data')
 const modules = '/data/profiles/web/node_modules'
 await mkdir(modules, { recursive: true })
 for (const name of [
@@ -25,6 +28,7 @@ const child = spawn(process.execPath, ['/app/scripts/start-web.mjs'], {
     ATELIER_WEB_HOME: '/data',
     ATELIER_WEB_WORKDIR: '/data/workspace',
     ATELIER_WEB_PORT: '3081',
+    ATELIER_WEB_CLOUD: '1',
     DSH_TELEMETRY_DISABLED: '1'
   },
   stdio: ['inherit', 'pipe', 'pipe']
@@ -41,9 +45,22 @@ for (const [stream, destination] of [[child.stdout, process.stdout], [child.stde
 
 const server = createServer((incoming, outgoing) => {
   const upstream = request({ host: '127.0.0.1', port: 3081, method: incoming.method,
-    path: incoming.url, headers: { ...incoming.headers, host: '127.0.0.1:3081' } }, response => {
-    outgoing.writeHead(response.statusCode ?? 502, response.headers)
-    response.pipe(outgoing)
+    path: incoming.url, headers: { ...incoming.headers, host: '127.0.0.1:3081', 'accept-encoding': 'identity' } }, response => {
+    if (response.headers['content-type']?.includes('text/html')) {
+      const chunks = []
+      response.on('data', chunk => chunks.push(chunk))
+      response.on('end', () => {
+        const html = enableCloudSettings(Buffer.concat(chunks).toString('utf8'))
+        const headers = { ...response.headers, 'content-length': Buffer.byteLength(html) }
+        delete headers['transfer-encoding']
+        outgoing.writeHead(response.statusCode ?? 502, headers)
+        outgoing.end(html)
+      })
+      response.on('error', () => outgoing.destroy())
+    } else {
+      outgoing.writeHead(response.statusCode ?? 502, response.headers)
+      response.pipe(outgoing)
+    }
   })
   upstream.on('error', () => { if (!outgoing.headersSent) outgoing.writeHead(502); outgoing.end() })
   incoming.pipe(upstream)

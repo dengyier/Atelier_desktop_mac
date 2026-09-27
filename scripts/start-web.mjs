@@ -33,9 +33,11 @@ const entry = join(root, 'build', 'harness-node-entry.mjs')
 const dsh = join(root, 'node_modules', '@deepseek-ai', 'dsh', 'lib', 'bin.js')
 const patch = join(root, 'build', 'dsh-desktop.patch.yml')
 const args = [
-  '--expose-internals', entry, dsh, 'web', '--patch', patch,
-  '--no-open', '--host', '127.0.0.1', '--port', String(port)
+  '--expose-internals', entry, dsh, 'web', '--patch', patch
 ]
+if (process.env.ATELIER_WEB_CLOUD === '1') args.push('--patch', join(root, 'build', 'atelier-web-cloud.patch.yml'))
+// DSH overlays must precede the first Web app argument.
+args.push('--no-open', '--host', '127.0.0.1', '--port', String(port))
 if (trustedHost) args.push('--trusted-host', trustedHost)
 
 const child = spawn(process.execPath, args, {

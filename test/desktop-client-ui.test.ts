@@ -13,6 +13,12 @@ type Rendered = { props: { className?: string; children: unknown[]; onClick?: ()
 const children = (node: Rendered): Rendered[] => node.props.children.flat() as Rendered[]
 
 describe('Atelier Desktop client slot occupants', () => {
+  it('installs the desktop logo into the Web Cloud runner image', async () => {
+    const dockerfile = await readFile(path.join(projectRoot, 'deploy', 'Dockerfile.web-runner'), 'utf8')
+    expect(dockerfile).toContain('COPY scripts/install-brand-assets.mjs scripts/install-brand-assets.mjs')
+    expect(dockerfile).toContain('RUN node scripts/install-brand-assets.mjs')
+  })
+
   it('renders the Atelier hero and fills the draft from both suggestion modes', async () => {
     const source = await readFile(
       path.join(projectRoot, 'packages', 'dsh-desktop-client-ui', 'client.js'),
@@ -66,18 +72,25 @@ describe('Atelier Desktop client slot occupants', () => {
     })
 
     const registrations: Registration[] = []
+    const activeSlots: string[] = []
     const slots = {
-      inject: (_name: string, callback: () => unknown): unknown => {
-        const result = callback()
-        if (result && typeof result === 'object' && Symbol.iterator in result) {
-          for (const _entry of result as Iterable<unknown>) void _entry
+      inject: (name: string, callback: () => unknown): unknown => {
+        activeSlots.push(name)
+        try {
+          const result = callback()
+          if (result && typeof result === 'object' && Symbol.iterator in result) {
+            for (const _entry of result as Iterable<unknown>) void _entry
+          }
+          return result
+        } finally {
+          activeSlots.pop()
         }
-        return result
       },
       register: (
         config: Registration['config'],
         component: Registration['component']
       ): (() => void) => {
+        if (!activeSlots.includes(config.name)) throw new Error(`slot "${config.name}" is not declared`)
         if (config.name === 'conversation.hero.suggestions' && !config.id) {
           throw new Error('list slot requires options.id')
         }
@@ -106,7 +119,8 @@ describe('Atelier Desktop client slot occupants', () => {
       'sidebar.brand.mark',
       'sidebar.brand.name',
       'conversation.hero.presentation',
-      'conversation.hero.suggestions'
+      'conversation.hero.suggestions',
+      'conversation.composer.dock'
     ])
     expect(appended).toHaveLength(1)
     expect(appended[0]!.textContent).toContain('.atelier-home-hero')
@@ -124,6 +138,7 @@ describe('Atelier Desktop client slot occupants', () => {
     )!.component({ size: 24 }) as { type: unknown; props: Record<string, unknown> }
     expect(sidebarMark.type).toBe('span')
     expect(sidebarMark.props.className).toBe('at-mark')
+    expect(sidebarMark.props['aria-hidden']).toBe('true')
     expect((sidebarMark.props.children as Array<{ type: string }>).map(child => child.type)).toEqual(['i', 'i', 'i'])
 
     const hero = registrations.find(
@@ -153,5 +168,10 @@ describe('Atelier Desktop client slot occupants', () => {
 
     const beforeWorkspace = suggestions({}) as Rendered
     expect(children(children(beforeWorkspace)[1]!).every(button => button.props.disabled)).toBe(true)
+
+    const composerDock = registrations.find(
+      ({ config }) => config.name === 'conversation.composer.dock'
+    )!.component({}) as Rendered
+    expect(composerDock.props.className).toBe('atelier-home-web-invite')
   })
 })

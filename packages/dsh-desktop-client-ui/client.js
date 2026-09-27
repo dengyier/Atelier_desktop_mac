@@ -193,7 +193,7 @@ window.__ModuleLoader__.load({
         keyInput: 'Clé API', keyPlaceholder: 'Saisissez votre clé API',
         customized: 'Paramètres avancés',
         onboardingTitle: 'Choisir un modèle dans les paramètres',
-        onboardingDescription: 'Avant de lancer une tâche, ouvrez Paramètres → Modèles, choisissez un fournisseur comme DeepSeek, puis saisissez sa clé API. Vous pouvez explorer Atelier avant cette étape.',
+        onboardingDescription: 'Avant de lancer une tâche, ouvrez Paramètres → Modèles, choisissez un fournisseur comme ChatGPT, puis saisissez sa clé API. Vous pouvez explorer Atelier avant cette étape.',
         onboardingOpenSettings: 'Ouvrir les paramètres des modèles',
         onboardingLater: 'Configurer plus tard'
       },
@@ -210,7 +210,8 @@ window.__ModuleLoader__.load({
 
     const brandStyles = `.at-logo{text-decoration:none}.at-mark{position:relative;display:inline-block;width:24px;height:28px;color:var(--dsw-alias-label-primary)}.at-mark i{position:absolute;width:5px;border-radius:999px;background:currentColor;transform:rotate(-18deg)}.at-mark i:nth-child(1){left:2px;top:13px;height:14px}.at-mark i:nth-child(2){left:9px;top:3px;height:23px}.at-mark i:nth-child(3){left:16px;top:1px;height:14px}.at-word{font-size:20px;font-weight:700;letter-spacing:-.05em;line-height:1}.at-beta{box-sizing:border-box;display:inline-flex;align-items:center;height:17px;padding:0 4px;border:1px solid var(--dsw-alias-border-l2);border-radius:3px;color:var(--dsw-alias-label-secondary);font-size:8px;font-weight:700;letter-spacing:.12em;line-height:1}`
 
-    const webStyles = `.atelier-home-web-invite{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px auto 0;padding:12px 14px;max-width:720px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-base);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:1.5}.atelier-home-web-invite a{flex:none;color:var(--dsw-alias-state-business-primary);font-weight:600;text-decoration:none}.atelier-home-web-invite a:hover{text-decoration:underline}.atelier-home-web-invite a:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:3px}@media(max-width:640px){.atelier-home-web-invite{align-items:flex-start;flex-direction:column}}`
+
+    const webStyles = `.atelier-home-web-invite{position:static;width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;margin-top:12px;padding:0 14px;box-sizing:border-box;color:var(--dsw-alias-label-secondary);font-size:12px;line-height:1.5}.atelier-home-web-invite>span{flex:1 1 320px;min-width:0;overflow-wrap:anywhere}.atelier-home-web-invite a{max-width:100%;overflow-wrap:anywhere;color:var(--dsw-alias-state-business-primary);font-weight:600;text-decoration:none}.atelier-home-web-invite a:hover{text-decoration:underline}.atelier-home-web-invite a:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:3px}@media(max-width:640px){.atelier-home-web-invite{align-items:flex-start;flex-direction:column;gap:4px}.atelier-home-web-invite>span{flex:auto}}`
 
     function installStyles() {
       if (document.getElementById(STYLE_ID)) return () => undefined
@@ -253,12 +254,6 @@ window.__ModuleLoader__.load({
 
       function AtelierSuggestions({ input, inputActions }) {
         const [mode, setMode] = React.useState('work')
-        const [cloudAccount, setCloudAccount] = React.useState(false)
-        React.useEffect(() => {
-          if (window.dshDesktop) return
-          fetch('/cloud/auth/me').then(response => response.json())
-            .then(value => setCloudAccount(Boolean(value?.userId))).catch(() => undefined)
-        }, [])
         const fill = (key) => {
           const prompt = t(`prompt.${key}`)
           const draft = input?.draft || ''
@@ -276,14 +271,6 @@ window.__ModuleLoader__.load({
               key, type: 'button', disabled: !inputActions,
               onClick: () => fill(key)
             }, t(key)))
-          ),
-          !window.dshDesktop && React.createElement('div', { className: 'atelier-home-web-invite' },
-            React.createElement('span', null, t('webPreview')),
-            React.createElement('a', {
-              href: 'https://github.com/dengyier/Atelier_desktop_mac/releases/tag/atelier-v0.1.0-preview.2',
-              target: '_blank', rel: 'noopener noreferrer'
-            }, t('desktopDownload'), ' ↗'),
-            cloudAccount && React.createElement('a', { href: '/cloud/account' }, t('cloudAccount'))
           )
         )
       }
@@ -291,16 +278,35 @@ window.__ModuleLoader__.load({
       ctx.slots.inject('sidebar.brand.mark', () =>
         ctx.slots.inject('sidebar.brand.name', () =>
           ctx.slots.inject('conversation.hero.presentation', () =>
-            ctx.slots.inject('conversation.hero.suggestions', function* () {
-              yield ctx.slots.register({ name: 'sidebar.brand.mark' }, AtelierMark)
-              yield ctx.slots.register({ name: 'sidebar.brand.name' }, AtelierName)
-              yield ctx.slots.register({ name: 'conversation.hero.presentation' }, AtelierHero)
-              yield ctx.slots.register({ name: 'conversation.hero.suggestions', id: 'atelier-home-suggestions' }, AtelierSuggestions)
-            })
+            ctx.slots.inject('conversation.hero.suggestions', () =>
+              ctx.slots.inject('conversation.composer.dock', function* () {
+                yield ctx.slots.register({ name: 'sidebar.brand.mark' }, AtelierMark)
+                yield ctx.slots.register({ name: 'sidebar.brand.name' }, AtelierName)
+                yield ctx.slots.register({ name: 'conversation.hero.presentation' }, AtelierHero)
+                yield ctx.slots.register({ name: 'conversation.hero.suggestions', id: 'atelier-home-suggestions' }, AtelierSuggestions)
+                yield ctx.slots.register({ name: 'conversation.composer.dock', id: 'atelier-home-web-invite' }, function AtelierWebInvite({ session }) {
+                  const [cloudAccount, setCloudAccount] = React.useState(false)
+                  React.useEffect(() => {
+                    if (window.dshDesktop) return
+                    fetch('/cloud/auth/me').then(response => response.json())
+                      .then(value => setCloudAccount(Boolean(value?.userId))).catch(() => undefined)
+                  }, [])
+                  if (window.dshDesktop) return null
+                  return React.createElement('div', { className: 'atelier-home-web-invite' },
+                    React.createElement('span', null, t('webPreview')),
+                    React.createElement('a', {
+                      href: 'https://github.com/dengyier/Atelier_desktop_mac/releases/tag/atelier-v0.1.0-preview.2',
+                      target: '_blank', rel: 'noopener noreferrer'
+                    }, t('desktopDownload'), ' ↗'),
+                    cloudAccount && React.createElement('a', { href: '/cloud/account' }, t('cloudAccount'))
+                  )
+                })
+              })
+            )
           )
         )
       )
-    }
+  }
 
     exports.apply = apply
     exports.inject = inject

@@ -1,0 +1,3 @@
+- insert:
+    - id: atelier-web-cloud-workspace
+      name: /app/build/atelier-web-cloud-workspace.mjs

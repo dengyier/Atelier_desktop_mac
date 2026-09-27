@@ -1,4 +1,4 @@
-import { createServer } from 'node:http'
+import { createServer, request } from 'node:http'
 import { afterEach, describe, expect, it } from 'vitest'
 import { createCloudGateway } from '../scripts/web-cloud/gateway.mjs'
 import { DockerRuntime, tenantId } from '../scripts/web-cloud/runtime.mjs'
@@ -21,66 +21,108 @@ function authResponse(status: number, data: object) {
 }
 
 describe('Atelier cloud gateway', () => {
-  it('requires identity for both page and task API, then keeps users on separate runners', async () => {
-    const seen: Array<{ user: string; cookie: string }> = []
-    const runners = new Map<string, { name: string; port: number; tokenUrl: string; cookie: string }>()
-    for (const user of ['alice', 'bob']) {
-      const runner = createServer((req, res) => {
-        if (req.url === '/?token=launch') {
-          res.setHeader('Set-Cookie', `runner=${user}; HttpOnly; Path=/`)
-          res.writeHead(303, { Location: '/' })
-          return res.end()
-        }
-        seen.push({ user, cookie: req.headers.cookie || '' })
-        res.setHeader('Set-Cookie', 'should-not-reach-browser=1')
-        res.end(user)
+  it('forwards initial upgraded response bytes to the browser', async () => {
+    const runner = createServer((_req, res) => {
+      res.writeHead(303, { 'Set-Cookie': 'runner=test; Path=/' })
+      res.end()
+    })
+    const upstreamSockets = new Set<import('node:stream').Duplex>()
+    runner.on('upgrade', (_req, socket) => {
+      upstreamSockets.add(socket)
+      socket.write('HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\nhello')
+    })
+    const runnerPort = await listen(runner)
+    const gatewayPort = await listen(createCloudGateway({
+      origin: 'http://127.0.0.1:18081',
+      runtime: { get: async () => ({ name: 'test', port: runnerPort, tokenUrl: 'http://127.0.0.1:3081/?token=launch', cookie: '' }) }
+    }))
+    try {
+      const received = await new Promise<string>((resolve, reject) => {
+        const client = request({ host: '127.0.0.1', port: gatewayPort, path: '/', headers: { Connection: 'Upgrade', Upgrade: 'websocket' } })
+        const timer = setTimeout(() => { client.destroy(); reject(new Error('Missing upgrade payload')) }, 2000)
+        client.on('error', error => { clearTimeout(timer); reject(error) })
+        client.on('upgrade', (_response, socket, head) => {
+          let bytes = head.toString()
+          const finish = () => {
+            if (!bytes.includes('hello')) return
+            clearTimeout(timer)
+            socket.destroy()
+            resolve(bytes)
+          }
+          socket.on('data', chunk => { bytes += chunk.toString(); finish() })
+          finish()
+        })
+        client.end()
       })
-      const port = await listen(runner)
-      runners.set(user, { name: user, port, tokenUrl: 'http://127.0.0.1:3081/?token=launch', cookie: '' })
+      expect(received).toBe('hello')
+    } finally {
+      for (const socket of upstreamSockets) socket.destroy()
     }
-    const runtime = { get: async (id: string) => runners.get(id)! }
-    const valid = new Set(['alice', 'bob'])
-    const fetcher = async (url: URL, init: RequestInit) => {
-      const path = url.pathname
-      if (path.endsWith('/auth/login')) {
-        const body = JSON.parse(String(init.body))
-        return authResponse(200, { token: body.email, userId: body.email })
+  })
+
+  it('allows anonymous access while assigning each browser an isolated runner', async () => {
+    const seen: Array<{ tenant: string; cookie: string }> = []
+    const runners = new Map<string, { name: string; port: number; tokenUrl: string; cookie: string }>()
+    const runtime = { get: async (id: string) => {
+      if (!runners.has(id)) {
+        const runner = createServer((req, res) => {
+          if (req.url === '/?token=launch') {
+            res.setHeader('Set-Cookie', `runner=${id}; HttpOnly; Path=/`)
+            res.writeHead(303, { Location: '/' })
+            return res.end()
+          }
+          seen.push({ tenant: id, cookie: req.headers.cookie || '' })
+          res.setHeader('Set-Cookie', 'should-not-reach-browser=1')
+          res.end(id)
+        })
+        const port = await listen(runner)
+        runners.set(id, { name: id, port, tokenUrl: 'http://127.0.0.1:3081/?token=launch', cookie: '' })
       }
-      if (path.endsWith('/auth/me')) {
-        const id = String(init.headers && (init.headers as Record<string, string>).Authorization).replace('Bearer ', '')
-        return valid.has(id) ? authResponse(200, { userId: id, displayName: id }) : authResponse(401, { detail: 'INVALID_SESSION' })
-      }
-      return authResponse(404, {})
-    }
-    const gateway = createCloudGateway({ authBase: 'http://auth.local', origin: 'http://127.0.0.1:18081', runtime, fetcher: fetcher as typeof fetch, loginHtml: '<h1>login</h1>' })
+      return runners.get(id)!
+    }}
+    const gateway = createCloudGateway({ origin: 'http://127.0.0.1:18081', runtime })
     const port = await listen(gateway)
     const base = `http://127.0.0.1:${port}`
-    expect((await fetch(base, { redirect: 'manual' })).status).toBe(302)
-    expect((await fetch(`${base}/api/session`)).status).toBe(401)
-    const cookies = new Map<string, string>()
-    const cookieFor = (user: string) => {
-      const value = cookies.get(user)
-      if (!value) throw new Error('Missing session cookie')
-      return value
+    const first = await fetch(base)
+    expect(first.status).toBe(200)
+    const firstCookie = first.headers.get('set-cookie')
+    expect(firstCookie).toMatch(/^atelier_web_tenant=[A-Za-z0-9_-]+; Path=\/; HttpOnly; SameSite=Lax/)
+    const firstTenant = firstCookie!.split(';')[0]!
+    const second = await fetch(base)
+    const secondTenant = second.headers.get('set-cookie')!.split(';')[0]!
+    expect(secondTenant).not.toBe(firstTenant)
+    expect(await (await fetch(`${base}/api/session`, { headers: { cookie: firstTenant } })).text()).toBe(firstTenant.split('=')[1])
+    expect(await (await fetch(`${base}/api/session`, { headers: { cookie: secondTenant } })).text()).toBe(secondTenant.split('=')[1])
+    expect(seen).toHaveLength(4)
+    expect(seen[0]!.tenant).not.toBe(seen[1]!.tenant)
+    expect(seen[2]!.tenant).toBe(seen[0]!.tenant)
+    expect(seen[3]!.tenant).toBe(seen[1]!.tenant)
+    expect(seen.every(entry => /^runner=/.test(entry.cookie))).toBe(true)
+  })
+
+  it('caches only versioned client resources and keeps user responses uncached', async () => {
+    const runner = createServer((req, res) => {
+      if (req.url === '/?token=launch') {
+        res.writeHead(303, { 'Set-Cookie': 'runner=private; Path=/' })
+        return res.end()
+      }
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+      res.end('response')
+    })
+    const runnerPort = await listen(runner)
+    const gatewayPort = await listen(createCloudGateway({
+      origin: 'http://127.0.0.1:18081',
+      runtime: { get: async () => ({ name: 'test', port: runnerPort, tokenUrl: 'http://127.0.0.1:3081/?token=launch', cookie: '' }) }
+    }))
+    for (const asset of ['/plugins/??test/client.js&rev=abcdef123456', '/assets/index-BKQ_L1z6.js', `/dsh-ppt/previews/${'a'.repeat(64)}.jpg`]) {
+      const response = await fetch(`http://127.0.0.1:${gatewayPort}${asset}`)
+      expect(response.headers.get('cache-control')).toBe('private, max-age=31536000, immutable')
+      expect(response.headers.get('vary')).toContain('Cookie')
     }
-    for (const user of ['alice', 'bob']) {
-      const response = await fetch(`${base}/cloud/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: user, password: 'test' }) })
-      expect(response.status).toBe(200)
-      expect(await response.text()).not.toContain('token')
-      const setCookie = response.headers.get('set-cookie')
-      if (!setCookie) throw new Error('Missing Set-Cookie')
-      expect(setCookie).toContain('HttpOnly')
-      cookies.set(user, setCookie.split(';')[0] || '')
+    for (const path of ['/', '/api/settings', '/api/session', '/plugins/events', '/plugins/??test/client.js', '/data/private.jpg']) {
+      const response = await fetch(`http://127.0.0.1:${gatewayPort}${path}`)
+      expect(response.headers.get('cache-control')).toBe('no-store')
     }
-    for (const user of ['alice', 'bob']) {
-      const response = await fetch(`${base}/api/session`, { headers: { cookie: cookieFor(user) } })
-      expect(await response.text()).toBe(user)
-      expect(response.headers.get('set-cookie')).toBeNull()
-    }
-    expect(seen).toEqual([{ user: 'alice', cookie: 'runner=alice' }, { user: 'bob', cookie: 'runner=bob' }])
-    valid.delete('alice')
-    expect((await fetch(`${base}/api/session`, { headers: { cookie: cookieFor('alice') } })).status).toBe(401)
-    expect((await fetch(`${base}/api/session`, { headers: { cookie: cookieFor('bob') } })).status).toBe(200)
   })
 
   it('uses opaque stable tenant names without exposing user IDs', () => {

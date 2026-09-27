@@ -5,8 +5,12 @@ COPY packages ./packages
 COPY patches ./patches
 RUN npm ci --ignore-scripts && npx patch-package && npm prune --omit=dev --ignore-scripts && npm cache clean --force
 COPY build ./build
+COPY scripts/install-brand-assets.mjs scripts/install-brand-assets.mjs
 COPY scripts/start-web.mjs scripts/start-web.mjs
 COPY scripts/web-cloud/runner.mjs scripts/web-cloud/runner.mjs
+COPY scripts/web-cloud/cloud-page.mjs scripts/web-cloud/cloud-page.mjs
+COPY scripts/web-cloud/default-settings.mjs scripts/web-cloud/default-settings.mjs
+RUN node scripts/install-brand-assets.mjs
 RUN mkdir -p /data && chown 10001:10001 /data
 USER 10001:10001
 EXPOSE 3080
